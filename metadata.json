@@ -1,0 +1,6 @@
+{
+  "name": "KAYOLA",
+  "description": "KAYOLA — Galerie d'art contemporain & plateforme e-commerce d'œuvres d'art uniques avec gestion bilingue (FR/EN), paiement hors-plateforme, suivi sécurisé et administration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
