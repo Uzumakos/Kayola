@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { store } from '../lib/store';
+import { isSupabaseConfigured, GeneratedCredentials } from '../lib/supabase';
 import { Artwork, PaymentMethod, Order } from '../types';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import confetti from 'canvas-confetti';
@@ -21,6 +22,9 @@ import {
   CreditCard,
   Barcode,
   Hash,
+  Key,
+  Lock,
+  BookmarkCheck,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -49,6 +53,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
   // Selected Payment Method
   const [selectedMethodId, setSelectedMethodId] = useState<string>('');
 
+  // Pre-allocated Order & Access Code Credentials
+  const [assignedCredentials, setAssignedCredentials] = useState<GeneratedCredentials | null>(null);
+
   // Proof File
   const [proofFile, setProofFile] = useState<{
     name: string;
@@ -66,6 +73,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
     const art = store.getArtworkById(artworkId) || store.getArtworkBySlug(artworkId);
     if (art) {
       setArtwork(art);
+      if (!assignedCredentials) {
+        const creds = store.generateCredentialsForCheckout(art.item_code || 'ART-2026');
+        setAssignedCredentials(creds);
+      }
     }
     const methods = store.getPaymentMethods(true);
     setPaymentMethods(methods);
@@ -96,9 +107,25 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopiedField(fieldId);
-      toast(t.checkout.copySuccess, 'info');
+      toast(t.checkout.copySuccess || 'Copié dans le presse-papier !', 'info');
       setTimeout(() => setCopiedField(null), 2500);
     }
+  };
+
+  const handleCopyAllSummary = () => {
+    if (!assignedCredentials || !selectedMethod) return;
+    const summaryText = `--- GALERIE KAYOLA | INSTRUCTIONS DE COMMANDE ---
+Code d'accès secret : ${assignedCredentials.accessCode}
+Numéro de commande / Réf : ${assignedCredentials.orderNumber}
+Code Article SKU : ${artwork.item_code || 'ART-2026-001'}
+Œuvre : ${artwork.title_fr} (${artwork.price.toLocaleString()} ${artwork.currency})
+
+Bénéficiaire : ${selectedMethod.account_name}
+Numéro / Tél : ${selectedMethod.account_number}
+Méthode : ${selectedMethod.name}
+Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de virement.`;
+
+    handleCopy(summaryText, 'all_summary');
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,6 +187,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
         notes,
         paymentMethodId: selectedMethod.id,
         proofFile: withImmediateProof && proofFile ? proofFile : undefined,
+        orderNumber: assignedCredentials?.orderNumber,
+        accessCode: assignedCredentials?.accessCode,
       });
 
       if (result.success && result.order) {
@@ -186,6 +215,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
   };
 
   const artworkTitle = locale === 'en' ? (artwork.title_en || artwork.title_fr) : artwork.title_fr;
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-12">
@@ -623,6 +653,128 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
                   </button>
                 </div>
 
+                {/* ACCESS CODE & ORDER REFERENCE HIGHLIGHT BOX */}
+                <div className="p-5 sm:p-6 bg-gradient-to-br from-[#FAF9F6] via-white to-amber-50/40 rounded-2xl border-2 border-[#EF5A33]/40 shadow-xs space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E8E6E2] pb-3.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-[#EF5A33]/10 text-[#EF5A33] flex items-center justify-center shrink-0">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-serif font-bold text-base text-[#171717]">
+                          Vos Identifiants & Code d'Accès de Commande
+                        </h4>
+                        <p className="text-[11px] text-[#737373]">
+                          Généré pour cette transaction — À noter et copier pour plus tard
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isSupabaseConfigured && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Supabase Backend Sync
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleCopyAllSummary}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#E8E6E2] text-xs font-semibold text-[#171717] hover:border-[#EF5A33] hover:text-[#EF5A33] transition-colors"
+                        title="Copier tout le récapitulatif"
+                      >
+                        {copiedField === 'all_summary' ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            <span className="text-emerald-700 text-[11px]">Tout copié !</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span className="text-[11px]">Copier le récapitulatif</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {/* Code d'accès Secret */}
+                    <div className="p-4 bg-white rounded-xl border-2 border-[#EF5A33]/40 shadow-xs space-y-1.5 relative overflow-hidden">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#EF5A33] flex items-center gap-1.5">
+                          <Key className="w-3.5 h-3.5" />
+                          <span>Code d'Accès Secret</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(assignedCredentials?.accessCode || '', 'step3_access_code')}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#EF5A33]/10 text-[#EF5A33] hover:bg-[#EF5A33] hover:text-white transition-colors text-[11px] font-bold cursor-pointer"
+                          title="Copier le code d'accès"
+                        >
+                          {copiedField === 'step3_access_code' ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Copié !</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Copier</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <div className="font-mono text-2xl sm:text-3xl font-black text-[#EF5A33] tracking-widest select-all pt-1">
+                        {assignedCredentials?.accessCode || '849201'}
+                      </div>
+                      <p className="text-[10px] text-[#737373] leading-tight pt-1">
+                        Requis pour accéder à votre commande sur la page <strong>Suivre ma commande</strong>.
+                      </p>
+                    </div>
+
+                    {/* Numéro de Commande / Réf Virement */}
+                    <div className="p-4 bg-white rounded-xl border border-[#E8E6E2] shadow-xs space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#171717] flex items-center gap-1.5">
+                          <Hash className="w-3.5 h-3.5 text-[#737373]" />
+                          <span>N° Commande (Réf. Virement)</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(assignedCredentials?.orderNumber || '', 'step3_order_num')}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#FAF9F6] border border-[#E8E6E2] text-[#171717] hover:border-[#EF5A33] hover:text-[#EF5A33] transition-colors text-[11px] font-semibold cursor-pointer"
+                          title="Copier le numéro de commande"
+                        >
+                          {copiedField === 'step3_order_num' ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Copié !</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Copier</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <div className="font-mono text-base sm:text-lg font-bold text-[#171717] select-all pt-1">
+                        {assignedCredentials?.orderNumber || 'ART-2026-84920'}
+                      </div>
+                      <p className="text-[10px] text-[#737373] leading-tight pt-1">
+                        À indiquer en motif / libellé lors de votre transfert.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-amber-50/80 rounded-xl border border-amber-200/70 text-[11px] text-amber-900 flex items-start gap-2.5">
+                    <BookmarkCheck className="w-4 h-4 text-[#EF5A33] shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Conseil :</strong> Copiez dès maintenant votre <strong>Code d'accès ({assignedCredentials?.accessCode})</strong>. Même si vous quittez ou effectuez le virement ultérieurement, vous pourrez retrouver votre dossier et joindre votre preuve via l'onglet <strong>Suivre ma commande</strong>.
+                    </span>
+                  </div>
+                </div>
+
                 {/* Account Details Box with 1-Click Copy */}
                 <div className="p-5 bg-[#FAF9F6] rounded-2xl border border-[#E8E6E2] space-y-4">
                   <div className="flex items-center justify-between gap-3">
@@ -665,7 +817,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
                       <button
                         type="button"
                         onClick={() => handleCopy(selectedMethod.account_name, 'name')}
-                        className="p-1.5 text-[#737373] hover:text-[#EF5A33]"
+                        className="p-1.5 text-[#737373] hover:text-[#EF5A33] cursor-pointer"
                         title="Copier le nom"
                       >
                         {copiedField === 'name' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -680,12 +832,33 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
                       <button
                         type="button"
                         onClick={() => handleCopy(selectedMethod.account_number, 'number')}
-                        className="p-1.5 text-[#737373] hover:text-[#EF5A33]"
+                        className="p-1.5 text-[#737373] hover:text-[#EF5A33] cursor-pointer"
                         title="Copier le numéro"
                       >
                         {copiedField === 'number' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                       </button>
                     </div>
+                  </div>
+
+                  {/* Dynamic transfer instructions highlighting the generated order number */}
+                  <div className="p-3.5 bg-white rounded-xl border border-[#E8E6E2] space-y-1.5 text-xs text-[#171717]">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-[#171717] flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5 text-[#EF5A33]" />
+                        <span>Référence de transaction à inscrire :</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(assignedCredentials?.orderNumber || '', 'order_ref_inline')}
+                        className="text-[11px] font-bold text-[#EF5A33] hover:underline flex items-center gap-1"
+                      >
+                        {copiedField === 'order_ref_inline' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                        <span>Copier la référence</span>
+                      </button>
+                    </div>
+                    <p className="text-xs text-[#737373] leading-relaxed">
+                      Effectuez le transfert <strong>{selectedMethod.name}</strong> vers le compte ci-dessus en inscrivant la référence <strong className="font-mono text-[#EF5A33] bg-[#FAF9F6] px-1.5 py-0.5 rounded border border-[#EF5A33]/30 select-all">{assignedCredentials?.orderNumber}</strong> dans le champ motif/libellé, puis téléversez une capture de la transaction.
+                    </p>
                   </div>
 
                   <p className="text-xs text-[#737373] leading-relaxed">

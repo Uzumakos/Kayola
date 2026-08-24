@@ -1,4 +1,5 @@
 import { Artwork, Category, Order, PaymentMethod, PaymentProof, OrderEvent, ArtworkStatus, GallerySettings } from '../types';
+import { generateAccessCredentials, syncOrderToSupabase, isSupabaseConfigured, GeneratedCredentials } from './supabase';
 
 const STORAGE_KEYS = {
   ARTWORKS: 'kayola_artworks_v1',
@@ -1004,7 +1005,17 @@ class KayolaStore {
     }
     this.saveOrders();
 
+    // Asynchronously sync to Supabase backend if configured
+    syncOrderToSupabase(newOrder).catch((err) => console.warn('Background Supabase sync:', err));
+
     return { order: newOrder, success: true };
+  }
+
+  /**
+   * Pre-generate access code & order number for checkout display
+   */
+  public generateCredentialsForCheckout(itemCode?: string): GeneratedCredentials {
+    return generateAccessCredentials(itemCode || 'ART-2026');
   }
 
   public uploadAdditionalProof(
@@ -1044,8 +1055,10 @@ class KayolaStore {
 
     this.updateArtworkStatus(order.artwork_id, 'PAYMENT_REVIEW');
     this.saveOrders();
+    syncOrderToSupabase(order).catch((err) => console.warn('Background Supabase sync:', err));
     return true;
   }
+
 
   // --- ADMIN ACTIONS ---
   public acceptPayment(orderId: string): boolean {
