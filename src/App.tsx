@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { store } from './lib/store';
-import { fetchAllArtworks, fetchAllCategories, fetchAllPaymentMethods, fetchSettingsFromSupabase } from './lib/supabase';
+import { fetchAllArtworks, fetchAllCategories, fetchAllPaymentMethods, fetchSettingsFromSupabase, fetchAllOrders } from './lib/supabase';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { Lightbox } from './components/ui/Lightbox';
@@ -36,6 +36,10 @@ const AppContent: React.FC = () => {
 
     fetchSettingsFromSupabase().then((remoteSettings) => {
       if (remoteSettings) store.mergeSettings(remoteSettings);
+    });
+
+    fetchAllOrders().then((remoteOrders) => {
+      if (remoteOrders.length > 0) store.mergeOrders(remoteOrders);
     });
   }, []);
 
