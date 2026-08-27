@@ -19,6 +19,7 @@ const INITIAL_SETTINGS: GallerySettings = {
   contact_email: 'contact@kayola-art.com',
   contact_phone: '+509 3800-0000',
   address: 'KAYOLA Space, Port-au-Prince & Global Concierge',
+  updated_at: '1970-01-01T00:00:00.000Z',
 };
 
 const INITIAL_CATEGORIES: Category[] = [
@@ -249,7 +250,7 @@ class KayolaStore {
   }
 
   public saveSettings(newSettings: Partial<GallerySettings>, skipSync = false): GallerySettings {
-    const now = new Date().toISOString();
+    const now = newSettings.updated_at || new Date().toISOString();
     this.settings = { ...this.settings, ...newSettings, updated_at: now };
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(this.settings));
     this.notify();
