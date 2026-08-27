@@ -78,7 +78,7 @@ export const KayolaLogo: React.FC<KayolaLogoProps> = ({
         </div>
 
         {variant !== 'icon-only' && (
-          <div className="flex flex-col">
+          <div className="flex flex-col whitespace-nowrap justify-center">
             <span
               className={`font-black tracking-tighter uppercase transition-colors duration-200 ${
                 variant === 'light' ? 'text-white' : 'text-[#1A1A1A] group-hover:text-[#EF5A33]'
@@ -127,7 +127,7 @@ export const KayolaLogo: React.FC<KayolaLogoProps> = ({
       </div>
 
       {variant !== 'icon-only' && (
-        <div className="flex flex-col">
+        <div className="flex flex-col whitespace-nowrap justify-center">
           <span
             className={`font-black tracking-tighter uppercase transition-colors duration-200 ${
               variant === 'light' ? 'text-white' : 'text-[#1A1A1A] group-hover:text-[#EF5A33]'
