@@ -13,8 +13,8 @@ interface ArtworkCardProps {
 export const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, priority = false }) => {
   const { locale, t, navigate, openLightbox } = useApp();
 
-  const title = locale === 'en' ? (artwork.title_en || artwork.title_fr) : artwork.title_fr;
-  const technique = locale === 'en' ? (artwork.technique_en || artwork.technique_fr) : artwork.technique_fr;
+  const title = locale === 'en' ? (artwork.title_en || artwork.title_fr) : locale === 'ht' ? (artwork.title_ht || artwork.title_fr) : artwork.title_fr;
+  const technique = locale === 'en' ? (artwork.technique_en || artwork.technique_fr) : locale === 'ht' ? (artwork.technique_ht || artwork.technique_fr) : artwork.technique_fr;
 
   const primaryImage =
     artwork.images.find((img) => img.is_primary)?.url ||
@@ -105,7 +105,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, priority = fa
               {t.artwork.price}
             </span>
             <span className="text-lg font-serif italic font-medium text-[#1A1A1A]">
-              {artwork.price.toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US')} {artwork.currency}
+              {artwork.price.toLocaleString(locale === 'fr' ? 'fr-FR' : locale === 'ht' ? 'ht-HT' : 'en-US')} {artwork.currency}
             </span>
           </div>
 

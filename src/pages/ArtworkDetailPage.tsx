@@ -56,11 +56,11 @@ export const ArtworkDetailPage: React.FC<ArtworkDetailPageProps> = ({ slug }) =>
     );
   }
 
-  const title = locale === 'en' ? (artwork.title_en || artwork.title_fr) : artwork.title_fr;
-  const description = locale === 'en' ? (artwork.description_en || artwork.description_fr) : artwork.description_fr;
-  const technique = locale === 'en' ? (artwork.technique_en || artwork.technique_fr) : artwork.technique_fr;
-  const materials = locale === 'en' ? (artwork.materials_en || artwork.materials_fr) : artwork.materials_fr;
-  const artistBio = locale === 'en' ? (artwork.artist_bio_en || artwork.artist_bio_fr) : artwork.artist_bio_fr;
+  const title = locale === 'en' ? (artwork.title_en || artwork.title_fr) : locale === 'ht' ? (artwork.title_ht || artwork.title_fr) : artwork.title_fr;
+  const description = locale === 'en' ? (artwork.description_en || artwork.description_fr) : locale === 'ht' ? (artwork.description_ht || artwork.description_fr) : artwork.description_fr;
+  const technique = locale === 'en' ? (artwork.technique_en || artwork.technique_fr) : locale === 'ht' ? (artwork.technique_ht || artwork.technique_fr) : artwork.technique_fr;
+  const materials = locale === 'en' ? (artwork.materials_en || artwork.materials_fr) : locale === 'ht' ? (artwork.materials_ht || artwork.materials_fr) : artwork.materials_fr;
+  const artistBio = locale === 'en' ? (artwork.artist_bio_en || artwork.artist_bio_fr) : locale === 'ht' ? (artwork.artist_bio_ht || artwork.artist_bio_fr) : artwork.artist_bio_fr;
 
   const currentImage = artwork.images[selectedImageIndex] || artwork.images[0];
   const isSold = artwork.status === 'SOLD';
@@ -192,7 +192,7 @@ export const ArtworkDetailPage: React.FC<ArtworkDetailPageProps> = ({ slug }) =>
                     {t.artwork.price}
                   </span>
                   <span className="text-3xl font-serif italic text-[#1A1A1A]">
-                    {artwork.price.toLocaleString(locale === 'fr' ? 'fr-FR' : 'en-US')} {artwork.currency}
+                    {artwork.price.toLocaleString(locale === 'fr' ? 'fr-FR' : locale === 'ht' ? 'ht-HT' : 'en-US')} {artwork.currency}
                   </span>
                 </div>
                 <StatusBadge status={artwork.status} type="artwork" locale={locale} />

@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
             <div className="pt-2 flex items-center gap-3 text-xs text-[#E8E6E2]/60">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#EF5A33]" />
-                Certificat d’Authenticité 100%
+
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white">
                 Paiement Manuel Vérifié
@@ -85,14 +85,7 @@ export const Footer: React.FC = () => {
                   {t.nav.trackOrder}
                 </button>
               </li>
-              <li>
-                <button
-                  onClick={() => navigate('/admin')}
-                  className="hover:text-[#EF5A33] transition-colors flex items-center gap-1 text-white/50 hover:text-white"
-                >
-                  {t.nav.admin}
-                </button>
-              </li>
+
               <li className="text-xs text-white/40 pt-2">
                 MonCash • NatCash • Virement Bancaire Sogebank & Unibank • SWIFT
               </li>

@@ -1,5 +1,5 @@
 import { Artwork, Category, Order, PaymentMethod, PaymentProof, OrderEvent, ArtworkStatus, GallerySettings } from '../types';
-import { generateAccessCredentials, syncOrderToSupabase, isSupabaseConfigured, GeneratedCredentials } from './supabase';
+import { generateAccessCredentials, syncOrderToSupabase, isSupabaseConfigured, GeneratedCredentials, syncArtworkToSupabase, deleteArtworkFromSupabase, syncPaymentMethodToSupabase, deletePaymentMethodFromSupabase, syncCategoryToSupabase, deleteCategoryFromSupabase, syncSettingsToSupabase } from './supabase';
 
 const STORAGE_KEYS = {
   ARTWORKS: 'kayola_artworks_v1',
@@ -66,362 +66,6 @@ const INITIAL_CATEGORIES: Category[] = [
     description_fr: 'Collages, matières superposées et expérimentations plastiques.',
     description_en: 'Collages, layered mediums, and plastic experimentations.',
     image_url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80',
-  },
-];
-
-const INITIAL_ARTWORKS: Artwork[] = [
-  {
-    id: 'art-1',
-    item_code: 'ART-2026-001',
-    slug: 'the-blue-horizon',
-    title_fr: 'The Blue Horizon',
-    title_en: 'The Blue Horizon',
-    artist: 'Damien Kael',
-    artist_bio_fr: 'Damien Kael explore les confins marins et les étendues atmosphériques à travers des empâtements riches et une lumière méditative.',
-    artist_bio_en: 'Damien Kael explores maritime depths and atmospheric expanses through rich impastos and meditative light.',
-    description_fr: 'Une œuvre monumentale évoquant la rencontre entre l’océan profond et le firmament au crépuscule. Les touches de bleu outremer et d’or créent une vibration hypnotique sous la lumière naturelle.',
-    description_en: 'A monumental artwork evoking the union between deep ocean and the dusk firmament. Notes of ultramarine and subtle gold create a hypnotic resonance under natural light.',
-    price: 3400,
-    currency: 'USD',
-    category_id: 'cat-1',
-    technique_fr: 'Huile sur lin brut et feuille d’or',
-    technique_en: 'Oil on raw linen with gold leaf',
-    materials_fr: 'Pigments purs, huile de lin, feuille d’or 24k, châssis bois massif',
-    materials_en: 'Pure pigments, linseed oil, 24k gold leaf, solid wood frame',
-    year: 2026,
-    width_cm: 120,
-    height_cm: 90,
-    depth_cm: 4.5,
-    weight_kg: 6.2,
-    is_framed: true,
-    has_certificate: true,
-    featured: true,
-    status: 'AVAILABLE',
-    images: [
-      {
-        id: 'img-1-1',
-        artwork_id: 'art-1',
-        url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Vue principale The Blue Horizon',
-        alt_text_en: 'Primary view of The Blue Horizon',
-        sort_order: 1,
-        is_primary: true,
-      },
-      {
-        id: 'img-1-2',
-        artwork_id: 'art-1',
-        url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Détail des textures et feuille d’or',
-        alt_text_en: 'Texture detail and gold leaf close-up',
-        sort_order: 2,
-      },
-      {
-        id: 'img-1-3',
-        artwork_id: 'art-1',
-        url: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Mise en situation dans salon de collectionneur',
-        alt_text_en: 'Interior staging in a collector living space',
-        sort_order: 3,
-      },
-    ],
-    created_at: '2026-08-10T10:00:00Z',
-  },
-  {
-    id: 'art-2',
-    item_code: 'ART-2026-002',
-    slug: 'golden-reverie',
-    title_fr: 'Golden Reverie',
-    title_en: 'Golden Reverie',
-    artist: 'Isabella Moreau',
-    artist_bio_fr: 'Diplômée des Beaux-Arts, Isabella conjugue architecture coloniale et abstractions chromatiques éclatantes.',
-    artist_bio_en: 'Beaux-Arts graduate Isabella marries colonial architectural silhouettes with radiant chromatic abstraction.',
-    description_fr: 'Une ode aux façades historiques baignées par une lumière solaire incandescente. La composition joue avec les contrastes chaleureux et les aplats architecturaux.',
-    description_en: 'An ode to historic facades bathed in incandescent sunlight. The composition balances warm architectural contrasts with luminous color blocks.',
-    price: 2850,
-    currency: 'USD',
-    category_id: 'cat-1',
-    technique_fr: 'Acrylique et encres de Chine sur toile de coton',
-    technique_en: 'Acrylic and India ink on heavy cotton canvas',
-    materials_fr: 'Acrylique extra-fine, encre permanente, vernis mat anti-UV',
-    materials_en: 'Extra-fine acrylic, permanent ink, anti-UV matte varnish',
-    year: 2026,
-    width_cm: 100,
-    height_cm: 100,
-    depth_cm: 4,
-    weight_kg: 5.0,
-    is_framed: true,
-    has_certificate: true,
-    featured: true,
-    status: 'AVAILABLE',
-    images: [
-      {
-        id: 'img-2-1',
-        artwork_id: 'art-2',
-        url: 'https://images.unsplash.com/photo-1578925518470-4def7a0f08bb?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Golden Reverie par Isabella Moreau',
-        alt_text_en: 'Golden Reverie by Isabella Moreau',
-        sort_order: 1,
-        is_primary: true,
-      },
-      {
-        id: 'img-2-2',
-        artwork_id: 'art-2',
-        url: 'https://images.unsplash.com/photo-1549887534-1541e9326642?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Angle et texture Golden Reverie',
-        alt_text_en: 'Side angle and texture for Golden Reverie',
-        sort_order: 2,
-      },
-    ],
-    created_at: '2026-08-12T14:30:00Z',
-  },
-  {
-    id: 'art-3',
-    item_code: 'ART-2026-003',
-    slug: 'echoes-of-the-forgotten',
-    title_fr: 'Echoes of the Forgotten',
-    title_en: 'Echoes of the Forgotten',
-    artist: 'Damien Kael',
-    artist_bio_fr: 'Figure majeure du portrait contemporain introspectif, explorant la mémoire collective et le regard humain.',
-    artist_bio_en: 'Major contemporary portraitist probing human gaze, ancestral memories, and emotional depth.',
-    description_fr: 'Un portrait expressif saisissant, sculpté dans la matière picturale. L’intensité du regard interpelle le spectateur et transcende le temps.',
-    description_en: 'A striking expressive portrait carved into layered impasto. The intensity of the gaze engages the viewer and transcends temporal boundaries.',
-    price: 4200,
-    currency: 'USD',
-    category_id: 'cat-1',
-    technique_fr: 'Huile et pigments naturels au couteau',
-    technique_en: 'Oil and raw pigments with palette knife',
-    materials_fr: 'Huile fine, cire d’abeille, toile tendue sur châssis à clés',
-    materials_en: 'Fine oil, beeswax medium, Belgian linen on keyed stretcher',
-    year: 2025,
-    width_cm: 80,
-    height_cm: 110,
-    depth_cm: 3.8,
-    weight_kg: 4.8,
-    is_framed: false,
-    has_certificate: true,
-    featured: true,
-    status: 'AVAILABLE',
-    images: [
-      {
-        id: 'img-3-1',
-        artwork_id: 'art-3',
-        url: 'https://images.unsplash.com/photo-1582561424760-0321d75e81fa?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Echoes of the Forgotten portrait',
-        alt_text_en: 'Echoes of the Forgotten portrait view',
-        sort_order: 1,
-        is_primary: true,
-      },
-      {
-        id: 'img-3-2',
-        artwork_id: 'art-3',
-        url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Détail de la matière et du regard',
-        alt_text_en: 'Close-up of texture and gaze',
-        sort_order: 2,
-      },
-    ],
-    created_at: '2026-08-01T09:15:00Z',
-  },
-  {
-    id: 'art-4',
-    item_code: 'ART-2026-004',
-    slug: 'ephemeral-bloom',
-    title_fr: 'Ephemeral Bloom',
-    title_en: 'Ephemeral Bloom',
-    artist: 'Nadia Laurent',
-    artist_bio_fr: 'Nadia Laurent fusionne la poésie botanique et les voyages oniriques à travers des compositions riches en symbolisme.',
-    artist_bio_en: 'Nadia Laurent merges botanical poetry and dreamlike voyages through rich symbolic compositions.',
-    description_fr: 'Une fresque figurative où la majesté d’un éléphant d’apparat se mêle aux floraisons éclatantes et aux drapés pourpres.',
-    description_en: 'A figurative masterwork where the solemn majesty of a ceremonial elephant intertwines with vibrant flora and crimson drapery.',
-    price: 3800,
-    currency: 'USD',
-    category_id: 'cat-5',
-    technique_fr: 'Aquarelle sur papier Arches et rehaussé de gouache',
-    technique_en: 'Watercolor on Arches 640g paper with gouache highlights',
-    materials_fr: 'Papier pur coton 640g, aquarelle extra-fine, verre musée anti-reflet',
-    materials_en: '640g pure cotton paper, extra-fine watercolor, museum anti-reflective glass',
-    year: 2026,
-    width_cm: 95,
-    height_cm: 75,
-    depth_cm: 3,
-    weight_kg: 3.5,
-    is_framed: true,
-    has_certificate: true,
-    featured: true,
-    status: 'AVAILABLE',
-    images: [
-      {
-        id: 'img-4-1',
-        artwork_id: 'art-4',
-        url: 'https://images.unsplash.com/photo-1549887534-1541e9326642?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Ephemeral Bloom par Nadia Laurent',
-        alt_text_en: 'Ephemeral Bloom by Nadia Laurent',
-        sort_order: 1,
-        is_primary: true,
-      },
-    ],
-    created_at: '2026-08-15T11:20:00Z',
-  },
-  {
-    id: 'art-5',
-    item_code: 'ART-2026-005',
-    slug: 'the-shimmering-tides',
-    title_fr: 'The Shimmering Tides',
-    title_en: 'The Shimmering Tides',
-    artist: 'Nadia Laurent',
-    artist_bio_fr: 'Artiste explorant les flux aquatiques et les mouvements topographiques vus du ciel.',
-    artist_bio_en: 'Artist exploring aquatic currents and topographic patterns viewed from high altitudes.',
-    description_fr: 'Une vue aérienne abstraite inspirée des lagons turquoise et des bancs de sable dorés. L’équilibre des tonalités invite au calme et à l’évasion.',
-    description_en: 'An aerial abstract perspective inspired by turquoise lagoons and sunlit sandbars. The tonal equilibrium invites serenity and quiet wonder.',
-    price: 3100,
-    currency: 'USD',
-    category_id: 'cat-4',
-    technique_fr: 'Résine époxy pigmentée et encres métalliques sur panneau de bois',
-    technique_en: 'Pigmented epoxy resin and metallic inks on cradled wood panel',
-    materials_fr: 'Résine cristal bio-sourcée, mica doré, pigments marins, panneau bouleau',
-    materials_en: 'Bio-based crystal resin, gold mica, marine pigments, birch panel',
-    year: 2026,
-    width_cm: 110,
-    height_cm: 80,
-    depth_cm: 5,
-    weight_kg: 7.1,
-    is_framed: false,
-    has_certificate: true,
-    featured: true,
-    status: 'AVAILABLE',
-    images: [
-      {
-        id: 'img-5-1',
-        artwork_id: 'art-5',
-        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'The Shimmering Tides vue d’ensemble',
-        alt_text_en: 'The Shimmering Tides full overview',
-        sort_order: 1,
-        is_primary: true,
-      },
-    ],
-    created_at: '2026-08-18T16:45:00Z',
-  },
-  {
-    id: 'art-6',
-    item_code: 'ART-2026-006',
-    slug: 'keeper-of-the-night',
-    title_fr: 'Keeper of the Night',
-    title_en: 'Keeper of the Night',
-    artist: 'Robbie Arnett',
-    artist_bio_fr: 'Peintre symboliste contemporain créant des paysages nocturnes illuminés par des apparitions dorées.',
-    artist_bio_en: 'Contemporary symbolist painter composing nocturnal landscapes illuminated by gilded apparitions.',
-    description_fr: 'Un cerf d’or se dresse sous la lune ronde au milieu de monts aux teintes sombres et ocres. Une allégorie de la vigilance et de la noblesse d’esprit.',
-    description_en: 'A golden stag stands poised under a luminescent moon amidst dark ochre valleys. A visual allegory of quiet resilience and noble vigilance.',
-    price: 4600,
-    currency: 'USD',
-    category_id: 'cat-1',
-    technique_fr: 'Huile et laque japonaise sur toile de lin',
-    technique_en: 'Oil and Japanese urushi lacquer on Belgian linen',
-    materials_fr: 'Pigments nocturnes, poudre d’or, laque végétale, cadre en noyer massif',
-    materials_en: 'Night pigments, gold powder, organic lacquer, solid walnut frame',
-    year: 2025,
-    width_cm: 130,
-    height_cm: 100,
-    depth_cm: 5,
-    weight_kg: 8.0,
-    is_framed: true,
-    has_certificate: true,
-    featured: true,
-    status: 'AVAILABLE',
-    images: [
-      {
-        id: 'img-6-1',
-        artwork_id: 'art-6',
-        url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Keeper of the Night',
-        alt_text_en: 'Keeper of the Night artwork',
-        sort_order: 1,
-        is_primary: true,
-      },
-    ],
-    created_at: '2026-07-28T12:00:00Z',
-  },
-  {
-    id: 'art-7',
-    item_code: 'ART-2026-007',
-    slug: 'leveil-sculptural',
-    title_fr: 'L’Éveil Sculptural',
-    title_en: 'The Sculptural Awakening',
-    artist: 'Marc-Aurèle Saint-Jean',
-    artist_bio_fr: 'Sculpteur renommé travaillant la tension entre les formes anthropomorphiques et la force brute du bronze.',
-    artist_bio_en: 'Renowned sculptor exploring tension between anthropomorphic gestures and the primal weight of bronze.',
-    description_fr: 'Buste sculpté avec une puissance brute, révélant la texture du plâtre et l’empreinte des mains du maître.',
-    description_en: 'Sculptural bust formed with raw elemental vigor, unveiling textured patina and the direct touch of the sculptor’s hands.',
-    price: 5200,
-    currency: 'USD',
-    category_id: 'cat-2',
-    technique_fr: 'Bronze à la cire perdue, patine brune et reflets chauds',
-    technique_en: 'Lost-wax cast bronze, warm brown patina',
-    materials_fr: 'Bronze d’art, socle en marbre noir de carrare',
-    materials_en: 'Fine art bronze, black Carrara marble base',
-    year: 2026,
-    width_cm: 45,
-    height_cm: 65,
-    depth_cm: 35,
-    weight_kg: 18.5,
-    is_framed: false,
-    has_certificate: true,
-    featured: false,
-    status: 'AVAILABLE',
-    images: [
-      {
-        id: 'img-7-1',
-        artwork_id: 'art-7',
-        url: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'L’Éveil Sculptural en bronze',
-        alt_text_en: 'Sculptural Awakening in bronze',
-        sort_order: 1,
-        is_primary: true,
-      },
-    ],
-    created_at: '2026-08-05T08:00:00Z',
-  },
-  {
-    id: 'art-8',
-    item_code: 'ART-2026-008',
-    slug: 'solitude-urbaine',
-    title_fr: 'Solitude Urbaine sous la Pluie',
-    title_en: 'Urban Solitude in Rain',
-    artist: 'Claire Delacroix',
-    artist_bio_fr: 'Photographe documentant la poésie des grandes métropoles à travers le prisme des reflets et de la pénombre.',
-    artist_bio_en: 'Fine art photographer documenting metropolitan soul through luminous reflections and soft twilight.',
-    description_fr: 'Tirage d’art d’une promenade solitaire sous les parapluies illuminés par les réverbères d’une allée pavée.',
-    description_en: 'Fine art photographic print capturing a solitary stroll beneath umbrellas, mirrored in rain-drenched cobblestones.',
-    price: 1950,
-    currency: 'USD',
-    category_id: 'cat-3',
-    technique_fr: 'Tirage argentique baryté signé et numéroté 1/1',
-    technique_en: 'Baryta silver gelatin print signed and numbered 1/1',
-    materials_fr: 'Papier Hahnemühle Photo Rag 308g, encres pigmentaires UltraChrome',
-    materials_en: 'Hahnemühle Photo Rag 308g, UltraChrome archival pigment inks',
-    year: 2025,
-    width_cm: 80,
-    height_cm: 60,
-    depth_cm: 2.5,
-    weight_kg: 3.0,
-    is_framed: true,
-    has_certificate: true,
-    featured: false,
-    status: 'SOLD',
-    sold_at: '2026-08-20T17:30:00Z',
-    images: [
-      {
-        id: 'img-8-1',
-        artwork_id: 'art-8',
-        url: 'https://images.unsplash.com/photo-1554080353-a576cf803bda?auto=format&fit=crop&w=1200&q=85',
-        alt_text_fr: 'Solitude Urbaine sous la Pluie',
-        alt_text_en: 'Urban Solitude in Rain',
-        sort_order: 1,
-        is_primary: true,
-      },
-    ],
-    created_at: '2026-07-15T15:00:00Z',
   },
 ];
 
@@ -505,128 +149,9 @@ const INITIAL_PAYMENT_METHODS: PaymentMethod[] = [
   },
 ];
 
-const INITIAL_ORDERS: Order[] = [
-  {
-    id: 'ord-demo-1',
-    order_number: 'ART-2026-00124',
-    tracking_token: 'kayola-sec-7f9a2e1d88bc4a',
-    access_code: '482917',
-    artwork_id: 'art-1',
-    artwork: INITIAL_ARTWORKS[0],
-    customer_first_name: 'Jean-Philippe',
-    customer_last_name: 'Duval',
-    customer_email: 'jp.duval@collection-art.com',
-    customer_phone: '+509 3712-9900',
-    customer_address: '14 Rue des Palmiers, Bois-Verna',
-    customer_city: 'Port-au-Prince',
-    customer_country: 'Haïti',
-    customer_notes: 'Livraison sécurisée avec certificat signé.',
-    payment_method_id: 'pay-sogebank',
-    payment_method: INITIAL_PAYMENT_METHODS[2],
-    amount: 3400,
-    currency: 'USD',
-    status: 'PAYMENT_REVIEW',
-    payment_submitted_at: '2026-08-23T14:15:00Z',
-    created_at: '2026-08-23T14:02:00Z',
-    updated_at: '2026-08-23T14:15:00Z',
-    payment_proofs: [
-      {
-        id: 'prf-1',
-        order_id: 'ord-demo-1',
-        file_name: 'recu_virement_sogebank_duval.png',
-        file_type: 'image/png',
-        file_size: 342000,
-        file_data_url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
-        uploaded_at: '2026-08-23T14:15:00Z',
-        status: 'PENDING',
-      },
-    ],
-    events: [
-      {
-        id: 'evt-1',
-        order_id: 'ord-demo-1',
-        event_type: 'ORDER_CREATED',
-        description_fr: 'Commande initiée par le client (Guest Checkout).',
-        description_en: 'Order initiated by client (Guest Checkout).',
-        created_at: '2026-08-23T14:02:00Z',
-      },
-      {
-        id: 'evt-2',
-        order_id: 'ord-demo-1',
-        event_type: 'PROOF_UPLOADED',
-        description_fr: 'Preuve de virement Sogebank soumise par le client.',
-        description_en: 'Sogebank transfer proof submitted by client.',
-        created_at: '2026-08-23T14:15:00Z',
-      },
-    ],
-  },
-  {
-    id: 'ord-demo-2',
-    order_number: 'ART-2026-00098',
-    tracking_token: 'kayola-sec-3a1b8c9d4e5f60',
-    access_code: '194826',
-    artwork_id: 'art-8',
-    artwork: INITIAL_ARTWORKS[7],
-    customer_first_name: 'Eleonore',
-    customer_last_name: 'Bastien',
-    customer_email: 'eleonore.bastien@luxury.fr',
-    customer_phone: '+33 6 44 20 18 90',
-    customer_address: '22 Avenue Montaigne',
-    customer_city: 'Paris',
-    customer_country: 'France',
-    customer_notes: 'Emballage d’art renforcé pour transport aérien.',
-    payment_method_id: 'pay-wire',
-    payment_method: INITIAL_PAYMENT_METHODS[4],
-    amount: 1950,
-    currency: 'USD',
-    status: 'SOLD',
-    payment_submitted_at: '2026-08-19T10:00:00Z',
-    payment_verified_at: '2026-08-20T11:00:00Z',
-    sold_at: '2026-08-20T17:30:00Z',
-    created_at: '2026-08-19T09:30:00Z',
-    updated_at: '2026-08-20T17:30:00Z',
-    payment_proofs: [
-      {
-        id: 'prf-2',
-        order_id: 'ord-demo-2',
-        file_name: 'swift_transfer_bastien.pdf',
-        file_type: 'application/pdf',
-        file_size: 458000,
-        file_data_url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
-        uploaded_at: '2026-08-19T10:00:00Z',
-        status: 'ACCEPTED',
-        reviewed_at: '2026-08-20T11:00:00Z',
-        reviewed_by: 'Commissaire Principal',
-      },
-    ],
-    events: [
-      {
-        id: 'evt-2-1',
-        order_id: 'ord-demo-2',
-        event_type: 'ORDER_CREATED',
-        description_fr: 'Commande enregistrée.',
-        description_en: 'Order created.',
-        created_at: '2026-08-19T09:30:00Z',
-      },
-      {
-        id: 'evt-2-2',
-        order_id: 'ord-demo-2',
-        event_type: 'PAYMENT_ACCEPTED',
-        description_fr: 'Paiement SWIFT vérifié et validé par la galerie.',
-        description_en: 'SWIFT payment verified and approved by gallery.',
-        created_at: '2026-08-20T11:00:00Z',
-      },
-      {
-        id: 'evt-2-3',
-        order_id: 'ord-demo-2',
-        event_type: 'SALE_CONFIRMED',
-        description_fr: 'Vente officiellement confirmée. Œuvre vendue.',
-        description_en: 'Sale officially confirmed. Artwork marked as SOLD.',
-        created_at: '2026-08-20T17:30:00Z',
-      },
-    ],
-  },
-];
+
+const INITIAL_ARTWORKS: Artwork[] = [];
+const INITIAL_ORDERS: Order[] = [];
 
 class KayolaStore {
   private artworks: Artwork[] = [];
@@ -727,6 +252,7 @@ class KayolaStore {
     this.settings = { ...this.settings, ...newSettings };
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(this.settings));
     this.notify();
+    syncSettingsToSupabase(this.settings).catch(e => console.warn(e));
     return { ...this.settings };
   }
 
@@ -744,6 +270,85 @@ class KayolaStore {
     });
   }
 
+  // --- REMOTE SYNC ---
+  public mergeArtworks(remoteArtworks: Artwork[]) {
+    let changed = false;
+    for (const remote of remoteArtworks) {
+      const idx = this.artworks.findIndex(a => a.id === remote.id);
+      if (idx === -1) {
+        this.artworks.push(remote);
+        changed = true;
+      } else if (new Date(remote.updated_at || 0) > new Date(this.artworks[idx].updated_at || 0)) {
+        this.artworks[idx] = remote;
+        changed = true;
+      }
+    }
+    if (changed) {
+      this.artworks.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+      this.saveArtworks();
+    }
+  }
+
+  public mergeOrders(remoteOrders: Order[]) {
+    let changed = false;
+    for (const remote of remoteOrders) {
+      const idx = this.orders.findIndex(o => o.id === remote.id);
+      if (idx === -1) {
+        this.orders.push(remote);
+        changed = true;
+      } else if (new Date(remote.updated_at || 0) > new Date(this.orders[idx].updated_at || 0)) {
+        this.orders[idx] = remote;
+        changed = true;
+      }
+    }
+    if (changed) {
+      this.orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      this.saveOrders();
+    }
+  }
+
+
+  public mergeCategories(remoteCategories: Category[]) {
+    let changed = false;
+    for (const remote of remoteCategories) {
+      const idx = this.categories.findIndex(c => c.id === remote.id);
+      if (idx === -1) {
+        this.categories.push(remote);
+        changed = true;
+      } else if (new Date(remote.updated_at || 0) > new Date(this.categories[idx].updated_at || 0)) {
+        this.categories[idx] = remote;
+        changed = true;
+      }
+    }
+    if (changed) {
+      this.categories.sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+      this.saveCategories();
+    }
+  }
+
+  public mergePaymentMethods(remotePaymentMethods: PaymentMethod[]) {
+    let changed = false;
+    for (const remote of remotePaymentMethods) {
+      const idx = this.paymentMethods.findIndex(p => p.id === remote.id);
+      if (idx === -1) {
+        this.paymentMethods.push(remote);
+        changed = true;
+      } else if (new Date(remote.updated_at || 0) > new Date(this.paymentMethods[idx].updated_at || 0)) {
+        this.paymentMethods[idx] = remote;
+        changed = true;
+      }
+    }
+    if (changed) {
+      this.savePaymentMethods();
+    }
+  }
+
+  public mergeSettings(remoteSettings: GallerySettings) {
+    if (new Date(remoteSettings.updated_at || 0) > new Date(this.settings.updated_at || 0)) {
+      this.settings = remoteSettings;
+      this.saveSettings(remoteSettings);
+    }
+  }
   // --- ARTWORKS ---
   public getArtworks(): Artwork[] {
     return [...this.artworks];
@@ -776,12 +381,14 @@ class KayolaStore {
       this.artworks.unshift(preparedArtwork);
     }
     this.saveArtworks();
+    syncArtworkToSupabase(preparedArtwork).catch(e => console.warn(e));
     return preparedArtwork;
   }
 
   public deleteArtwork(id: string) {
     this.artworks = this.artworks.filter((a) => a.id !== id);
     this.saveArtworks();
+    deleteArtworkFromSupabase(id).catch(e => console.warn(e));
   }
 
   public updateArtworkStatus(id: string, status: ArtworkStatus) {
@@ -792,6 +399,7 @@ class KayolaStore {
         art.sold_at = new Date().toISOString();
       }
       this.saveArtworks();
+      syncArtworkToSupabase(art).catch(e => console.warn(e));
     }
   }
 
@@ -808,19 +416,20 @@ class KayolaStore {
       this.categories.push(category);
     }
     this.saveCategories();
+    syncCategoryToSupabase(category).catch(e => console.warn(e));
     return category;
   }
 
   public deleteCategory(id: string) {
     this.categories = this.categories.filter((c) => c.id !== id);
     this.saveCategories();
+    deleteCategoryFromSupabase(id).catch(e => console.warn(e));
   }
 
   // --- PAYMENT METHODS ---
   public getPaymentMethods(activeOnly = true): PaymentMethod[] {
     return activeOnly ? this.paymentMethods.filter((p) => p.is_active) : [...this.paymentMethods];
   }
-
   public getPaymentMethodById(id: string): PaymentMethod | undefined {
     return this.paymentMethods.find((p) => p.id === id);
   }
@@ -833,12 +442,14 @@ class KayolaStore {
       this.paymentMethods.push({ ...method });
     }
     this.savePaymentMethods();
+    syncPaymentMethodToSupabase(method).catch(e => console.warn(e));
     return method;
   }
 
   public deletePaymentMethod(id: string): boolean {
     this.paymentMethods = this.paymentMethods.filter((p) => p.id !== id);
     this.savePaymentMethods();
+    deletePaymentMethodFromSupabase(id).catch(e => console.warn(e));
     return true;
   }
 
@@ -847,6 +458,7 @@ class KayolaStore {
     if (method) {
       method.is_active = !method.is_active;
       this.savePaymentMethods();
+      syncPaymentMethodToSupabase(method).catch(e => console.warn(e));
       return true;
     }
     return false;

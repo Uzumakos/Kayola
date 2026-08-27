@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { store } from './lib/store';
+import { fetchAllArtworks, fetchAllCategories, fetchAllPaymentMethods, fetchSettingsFromSupabase } from './lib/supabase';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { Lightbox } from './components/ui/Lightbox';
@@ -18,6 +20,25 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 const AppContent: React.FC = () => {
   const { currentPath, locale, lightboxImage, closeLightbox, toastMessage, hideToast } = useApp();
 
+  // Fetch all data from Supabase on initial load
+  useEffect(() => {
+    fetchAllArtworks().then((remoteArtworks) => {
+      if (remoteArtworks.length > 0) store.mergeArtworks(remoteArtworks);
+    });
+    
+    fetchAllCategories().then((remoteCategories) => {
+      if (remoteCategories.length > 0) store.mergeCategories(remoteCategories);
+    });
+
+    fetchAllPaymentMethods().then((remotePaymentMethods) => {
+      if (remotePaymentMethods.length > 0) store.mergePaymentMethods(remotePaymentMethods);
+    });
+
+    fetchSettingsFromSupabase().then((remoteSettings) => {
+      if (remoteSettings) store.mergeSettings(remoteSettings);
+    });
+  }, []);
+
   // Simple, elegant client-side path dispatcher
   const renderRoute = () => {
     // Normalize path (strip trailing slashes)
@@ -29,7 +50,7 @@ const AppContent: React.FC = () => {
     }
 
     // Locale-prefixed routes (e.g. /fr, /en, /fr/gallery, /en/gallery, etc.)
-    const localizedPath = path.replace(/^\/(fr|en)/, '') || '/';
+    const localizedPath = path.replace(/^\/(fr|en|ht)/, '') || '/';
 
     if (localizedPath === '/' || localizedPath === '') {
       return <HomePage />;

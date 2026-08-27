@@ -71,8 +71,8 @@ export const GalleryPage: React.FC = () => {
       if (sortBy === 'price_asc') return a.price - b.price;
       if (sortBy === 'price_desc') return b.price - a.price;
       if (sortBy === 'title') {
-        const titleA = locale === 'en' ? a.title_en : a.title_fr;
-        const titleB = locale === 'en' ? b.title_en : b.title_fr;
+        const titleA = locale === 'en' ? a.title_en : locale === 'ht' ? (a.title_ht || a.title_fr) : a.title_fr;
+        const titleB = locale === 'en' ? b.title_en : locale === 'ht' ? (b.title_ht || b.title_fr) : b.title_fr;
         return titleA.localeCompare(titleB);
       }
       // default latest
@@ -159,7 +159,7 @@ export const GalleryPage: React.FC = () => {
           </button>
 
           {categories.map((cat) => {
-            const name = locale === 'en' ? cat.name_en : cat.name_fr;
+            const name = locale === 'en' ? cat.name_en : locale === 'ht' ? (cat.name_ht || cat.name_fr) : cat.name_fr;
             const count = artworks.filter((a) => a.category_id === cat.id).length;
             const isSelected = selectedCategory === cat.id;
             return (

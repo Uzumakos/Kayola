@@ -99,6 +99,9 @@ export const AdminDashboardPage: React.FC = () => {
   const [galleryNameInput, setGalleryNameInput] = useState(() => store.getSettings().gallery_name || 'KAYOLA');
   const [taglineFrInput, setTaglineFrInput] = useState(() => store.getSettings().tagline_fr || 'Art Contemporain');
   const [taglineEnInput, setTaglineEnInput] = useState(() => store.getSettings().tagline_en || 'Contemporary Art');
+  const [contactEmailInput, setContactEmailInput] = useState(() => store.getSettings().contact_email || '');
+  const [contactPhoneInput, setContactPhoneInput] = useState(() => store.getSettings().contact_phone || '');
+  const [addressInput, setAddressInput] = useState(() => store.getSettings().address || '');
   const [logoImageLoadError, setLogoImageLoadError] = useState(false);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
 
@@ -411,6 +414,9 @@ export const AdminDashboardPage: React.FC = () => {
       gallery_name: galleryNameInput.trim() || 'KAYOLA',
       tagline_fr: taglineFrInput.trim() || 'Art Contemporain',
       tagline_en: taglineEnInput.trim() || 'Contemporary Art',
+      contact_email: contactEmailInput.trim(),
+      contact_phone: contactPhoneInput.trim(),
+      address: addressInput.trim(),
     });
     setSettings(updated);
     toast('Identité et logo de la galerie mis à jour avec succès.', 'success');
@@ -1428,6 +1434,54 @@ export const AdminDashboardPage: React.FC = () => {
                       value={taglineEnInput}
                       onChange={(e) => setTaglineEnInput(e.target.value)}
                       placeholder="Contemporary Art"
+                      className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
+                    />
+                  </div>
+                </div>
+
+                {/* Coordonnées de Contact */}
+                <div className="space-y-4 pt-4 border-t border-[#E8E6E2]">
+                  <h5 className="font-serif font-bold text-sm text-[#171717]">
+                    Coordonnées de Contact & Adresse
+                  </h5>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#737373]">
+                        Email de Contact
+                      </label>
+                      <input
+                        type="email"
+                        value={contactEmailInput}
+                        onChange={(e) => setContactEmailInput(e.target.value)}
+                        placeholder="contact@kayola-art.com"
+                        className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#737373]">
+                        Téléphone
+                      </label>
+                      <input
+                        type="tel"
+                        value={contactPhoneInput}
+                        onChange={(e) => setContactPhoneInput(e.target.value)}
+                        placeholder="+509 3800-0000"
+                        className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-[#737373]">
+                      Adresse Physique
+                    </label>
+                    <input
+                      type="text"
+                      value={addressInput}
+                      onChange={(e) => setAddressInput(e.target.value)}
+                      placeholder="Espace KAYOLA — Quartier des Galeries, Port-au-Prince"
                       className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
                     />
                   </div>

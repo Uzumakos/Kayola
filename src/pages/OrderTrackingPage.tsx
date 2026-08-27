@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { store } from '../lib/store';
+import { fetchOrderForTracking } from '../lib/supabase';
 import { Order, OrderStatus } from '../types';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import {
@@ -68,13 +69,24 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
     }
   }, [tokenParam, t.tracking.notFoundError]);
 
-  const handleLookup = (e: React.FormEvent) => {
+  const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault();
     setSearchError(null);
     setIsSearching(true);
 
-    setTimeout(() => {
-      const order = store.findOrderForTracking(orderNumberInput, accessCodeInput);
+    try {
+      // 1. Check local store first (instant)
+      let order = store.findOrderForTracking(orderNumberInput, accessCodeInput);
+      
+      // 2. Fetch from Supabase to get latest status or if not found locally
+      const remoteOrder = await fetchOrderForTracking(orderNumberInput, accessCodeInput);
+      
+      if (remoteOrder) {
+        store.mergeOrders([remoteOrder]);
+        // re-fetch from store to get populated artwork/payment_method
+        order = store.findOrderForTracking(orderNumberInput, accessCodeInput);
+      }
+
       if (order) {
         setCurrentOrder(order);
         setSearchError(null);
@@ -82,8 +94,12 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
         setCurrentOrder(null);
         setSearchError(t.tracking.notFoundError);
       }
+    } catch (err) {
+      console.error(err);
+      setSearchError("Une erreur s'est produite lors de la recherche.");
+    } finally {
       setIsSearching(false);
-    }, 300);
+    }
   };
 
   const handleResubmitProof = () => {
@@ -228,40 +244,7 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
             </button>
           </form>
 
-          <div className="p-4 bg-[#FAF9F6] rounded-xl border border-[#1A1A1A]/10 text-[11px] text-[#1A1A1A]/70 space-y-2">
-            <p className="font-bold text-[#1A1A1A] uppercase tracking-wider text-[10px]">Commandes de démonstration disponibles :</p>
-            <div className="flex flex-col gap-1.5 font-mono text-[10px]">
-              <span
-                onClick={() => {
-                  setOrderNumberInput('ART-2026-00124');
-                  setAccessCodeInput('482917');
-                }}
-                className="cursor-pointer text-[#EF5A33] hover:underline flex items-center justify-between"
-              >
-                <span>N° ART-2026-00124 (Code: 482917)</span>
-                <span className="text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-sm">En révision</span>
-              </span>
-              <span
-                onClick={() => {
-                  setOrderNumberInput('ART-2026-00098');
-                  setAccessCodeInput('194826');
-                }}
-                className="cursor-pointer text-[#EF5A33] hover:underline flex items-center justify-between"
-              >
-                <span>N° ART-2026-00098 (Code: 194826)</span>
-                <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-sm">Vente confirmée</span>
-              </span>
-              <span
-                onClick={() => {
-                  setOrderNumberInput('ART-2026-001');
-                  setAccessCodeInput('482917');
-                }}
-                className="cursor-pointer text-[#737373] hover:text-[#171717] hover:underline flex items-center justify-between"
-              >
-                <span>Recherche par Réf Article : ART-2026-001 (Code: 482917)</span>
-              </span>
-            </div>
-          </div>
+
         </motion.div>
       )}
 
@@ -285,7 +268,7 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
                 <StatusBadge status={currentOrder.status} type="order" locale={locale} />
               </div>
               <p className="text-xs text-[#737373]">
-                Initié le {new Date(currentOrder.created_at).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', {
+                Initié le {new Date(currentOrder.created_at).toLocaleDateString(locale === 'fr' ? 'fr-FR' : locale === 'ht' ? 'ht-HT' : 'en-US', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
@@ -598,7 +581,7 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
                             <div className="truncate">
                               <p className="font-mono font-medium truncate text-[#171717]">{proof.file_name}</p>
                               <p className="text-[10px] text-[#737373]">
-                                {new Date(proof.uploaded_at).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US')}
+                                {new Date(proof.uploaded_at).toLocaleDateString(locale === 'fr' ? 'fr-FR' : locale === 'ht' ? 'ht-HT' : 'en-US')}
                               </p>
                             </div>
                           </div>

@@ -1,4 +1,4 @@
-export type Locale = 'fr' | 'en';
+export type Locale = 'fr' | 'en' | 'ht';
 
 export type ArtworkStatus = 'AVAILABLE' | 'RESERVED' | 'PAYMENT_REVIEW' | 'SOLD';
 
@@ -17,6 +17,7 @@ export interface ArtworkImage {
   url: string;
   alt_text_fr: string;
   alt_text_en: string;
+  alt_text_ht?: string;
   sort_order: number;
   is_primary?: boolean;
 }
@@ -26,10 +27,15 @@ export interface Category {
   slug: string;
   name_fr: string;
   name_en: string;
+  name_ht?: string;
   description_fr: string;
   description_en: string;
+  description_ht?: string;
   image_url?: string;
   count?: number;
+
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Artwork {
@@ -38,18 +44,23 @@ export interface Artwork {
   slug: string;
   title_fr: string;
   title_en: string;
+  title_ht?: string;
   artist: string;
   artist_bio_fr?: string;
   artist_bio_en?: string;
+  artist_bio_ht?: string;
   description_fr: string;
   description_en: string;
+  description_ht?: string;
   price: number;
   currency: string;
   category_id: string;
   technique_fr: string;
   technique_en: string;
+  technique_ht?: string;
   materials_fr: string;
   materials_en: string;
+  materials_ht?: string;
   year: number;
   width_cm: number;
   height_cm: number;
@@ -72,16 +83,21 @@ export interface PaymentMethod {
   type: 'moncash' | 'natcash' | 'bank_transfer' | 'wire' | 'other';
   description_fr: string;
   description_en: string;
+  description_ht?: string;
   instructions_fr: string;
   instructions_en: string;
+  instructions_ht?: string;
   account_name: string;
   account_number: string;
   phone_number?: string;
   additional_information_fr?: string;
   additional_information_en?: string;
+  additional_information_ht?: string;
   logo_url?: string;
   is_active: boolean;
   created_at?: string;
+
+  updated_at?: string;
 }
 
 export interface PaymentProof {
@@ -102,15 +118,16 @@ export interface OrderEvent {
   id: string;
   order_id: string;
   event_type:
-    | 'ORDER_CREATED'
-    | 'PROOF_UPLOADED'
-    | 'PROOF_RESUBMITTED'
-    | 'PAYMENT_ACCEPTED'
-    | 'PAYMENT_REJECTED'
-    | 'SALE_CONFIRMED'
-    | 'ORDER_CANCELLED';
+  | 'ORDER_CREATED'
+  | 'PROOF_UPLOADED'
+  | 'PROOF_RESUBMITTED'
+  | 'PAYMENT_ACCEPTED'
+  | 'PAYMENT_REJECTED'
+  | 'SALE_CONFIRMED'
+  | 'ORDER_CANCELLED';
   description_fr: string;
   description_en: string;
+  description_ht?: string;
   created_at: string;
   created_by?: string;
 }
@@ -158,10 +175,15 @@ export interface GallerySettings {
   gallery_name: string;
   tagline_fr: string;
   tagline_en: string;
+  tagline_ht?: string;
   logo_url?: string;
   logo_type?: 'monogram' | 'image';
   favicon_url?: string;
   contact_email?: string;
   contact_phone?: string;
   address?: string;
+
+  updated_at?: string;
 }
+
+// EOF

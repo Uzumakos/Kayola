@@ -11,7 +11,7 @@ interface ToastInfo {
 interface AppContextType {
   locale: Locale;
   setLocale: (loc: Locale) => void;
-  t: (typeof translations)['fr'] | (typeof translations)['en'];
+  t: (typeof translations)['fr'] | (typeof translations)['en'] | (typeof translations)['ht'];
   currentPath: string;
   navigate: (path: string) => void;
   toast: (message: string, type?: 'success' | 'info' | 'error') => void;
@@ -39,6 +39,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname;
       if (pathname.startsWith('/en')) return 'en';
+      if (pathname.startsWith('/ht')) return 'ht';
       return 'fr'; // default French
     }
     return 'fr';
@@ -57,6 +58,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (pathname.startsWith('/en')) {
         setLocaleState('en');
         document.documentElement.lang = 'en';
+      } else if (pathname.startsWith('/ht')) {
+        setLocaleState('ht');
+        document.documentElement.lang = 'ht';
       } else if (pathname.startsWith('/fr')) {
         setLocaleState('fr');
         document.documentElement.lang = 'fr';
@@ -82,6 +86,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (path.startsWith('/en')) {
       setLocaleState('en');
       document.documentElement.lang = 'en';
+    } else if (path.startsWith('/ht')) {
+      setLocaleState('ht');
+      document.documentElement.lang = 'ht';
     } else if (path.startsWith('/fr')) {
       setLocaleState('fr');
       document.documentElement.lang = 'fr';
@@ -93,11 +100,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     document.documentElement.lang = newLocale;
 
     // Switch current path prefix
-    if (currentPath.startsWith('/fr') && newLocale === 'en') {
-      const newPath = currentPath.replace(/^\/fr/, '/en');
-      navigate(newPath);
-    } else if (currentPath.startsWith('/en') && newLocale === 'fr') {
-      const newPath = currentPath.replace(/^\/en/, '/fr');
+    const oldPrefix = currentPath.match(/^\/(fr|en|ht)/);
+    if (oldPrefix && oldPrefix[1] !== newLocale) {
+      const newPath = currentPath.replace(/^\/(fr|en|ht)/, `/${newLocale}`);
       navigate(newPath);
     }
   };

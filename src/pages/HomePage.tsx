@@ -107,12 +107,7 @@ export const HomePage: React.FC = () => {
 
               {/* Assurance mini badges */}
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 text-left">
-                <div>
-                  <p className="text-xs uppercase font-bold tracking-wider text-white">
-                    100% Originaux
-                  </p>
-                  <p className="text-[11px] text-white/50">Certificat d'authenticité</p>
-                </div>
+
                 <div>
                   <p className="text-xs uppercase font-bold tracking-wider text-white">
                     Règlement Direct
@@ -175,7 +170,7 @@ export const HomePage: React.FC = () => {
                                 PAR {activeArt.artist} • {activeArt.year}
                               </span>
                               <h3 className="font-serif italic text-2xl font-normal text-white group-hover:text-[#EF5A33] transition-colors mt-0.5 truncate">
-                                {locale === 'en' ? (activeArt.title_en || activeArt.title_fr) : activeArt.title_fr}
+                                {locale === 'en' ? (activeArt.title_en || activeArt.title_fr) : locale === 'ht' ? (activeArt.title_ht || activeArt.title_fr) : activeArt.title_fr}
                               </h3>
                             </div>
                             <span className="font-serif italic text-xl text-white whitespace-nowrap shrink-0">
@@ -197,11 +192,10 @@ export const HomePage: React.FC = () => {
                                   e.stopPropagation();
                                   setCurrentArtIndex(idx);
                                 }}
-                                className={`h-1.5 rounded-full transition-all duration-500 ${
-                                  idx === (currentArtIndex % Math.min(artworks.length, 8))
+                                className={`h-1.5 rounded-full transition-all duration-500 ${idx === (currentArtIndex % Math.min(artworks.length, 8))
                                     ? 'w-6 bg-[#EF5A33]'
                                     : 'w-1.5 bg-white/20 hover:bg-white/40'
-                                }`}
+                                  }`}
                                 title={art.title_fr}
                               />
                             ))}
@@ -291,8 +285,8 @@ export const HomePage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((cat) => {
-            const name = locale === 'en' ? cat.name_en : cat.name_fr;
-            const desc = locale === 'en' ? cat.description_en : cat.description_fr;
+            const name = locale === 'en' ? cat.name_en : locale === 'ht' ? (cat.name_ht || cat.name_fr) : cat.name_fr;
+            const desc = locale === 'en' ? cat.description_en : locale === 'ht' ? (cat.description_ht || cat.description_fr) : cat.description_fr;
             return (
               <div
                 key={cat.id}

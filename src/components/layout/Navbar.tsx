@@ -108,6 +108,18 @@ export const Navbar: React.FC = () => {
               >
                 EN
               </button>
+              <button
+                type="button"
+                onClick={() => setLocale('ht')}
+                className={`px-3 py-1 rounded-full transition-all duration-200 ${
+                  locale === 'ht'
+                    ? 'bg-white text-[#1A1A1A] shadow-xs'
+                    : 'text-[#1A1A1A]/40 hover:text-[#1A1A1A]'
+                }`}
+                aria-label="Switch to Kreyòl"
+              >
+                HT
+              </button>
             </div>
 
             {/* Track Order Button */}
@@ -123,15 +135,6 @@ export const Navbar: React.FC = () => {
               <span>{t.nav.trackOrder}</span>
             </button>
 
-            {/* Admin Direct Button */}
-            <button
-              onClick={() => navigate('/admin')}
-              className="w-9 h-9 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center text-xs font-bold hover:bg-[#EF5A33] transition-colors shadow-xs"
-              title={t.nav.admin}
-              aria-label={t.nav.admin}
-            >
-              AD
-            </button>
           </div>
 
           {/* Mobile Right Bar: Language Switch + Hamburger */}
@@ -153,6 +156,14 @@ export const Navbar: React.FC = () => {
                 }`}
               >
                 EN
+              </button>
+              <button
+                onClick={() => setLocale('ht')}
+                className={`px-2.5 py-1 rounded-full ${
+                  locale === 'ht' ? 'bg-white text-[#1A1A1A] shadow-xs' : 'text-[#1A1A1A]/40'
+                }`}
+              >
+                HT
               </button>
             </div>
 
@@ -205,18 +216,7 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
 
-            <div className="pt-3 border-t border-[#E8E6E2] flex items-center justify-between px-2">
-              <button
-                onClick={() => {
-                  navigate('/admin');
-                  setMobileMenuOpen(false);
-                }}
-                className="inline-flex items-center gap-2 text-xs font-semibold text-[#737373] hover:text-[#171717]"
-              >
-                <Lock className="w-3.5 h-3.5" />
-                {t.nav.admin}
-              </button>
-
+            <div className="pt-3 border-t border-[#E8E6E2] flex items-center justify-center px-2">
               <span className="text-xs text-[#737373]">
                 KAYOLA © 2026
               </span>

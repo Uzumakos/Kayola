@@ -214,7 +214,7 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
     }
   };
 
-  const artworkTitle = locale === 'en' ? (artwork.title_en || artwork.title_fr) : artwork.title_fr;
+  const artworkTitle = locale === 'en' ? (artwork.title_en || artwork.title_fr) : locale === 'ht' ? (artwork.title_ht || artwork.title_fr) : artwork.title_fr;
 
 
   return (
@@ -560,7 +560,7 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
                 <div className="space-y-3">
                   {paymentMethods.map((method) => {
                     const isSelected = selectedMethodId === method.id;
-                    const desc = locale === 'en' ? method.description_en : method.description_fr;
+                    const desc = locale === 'en' ? method.description_en : locale === 'ht' ? (method.description_ht || method.description_fr) : method.description_fr;
                     return (
                       <label
                         key={method.id}
@@ -794,7 +794,7 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
                           {selectedMethod.name}
                         </span>
                         <span className="text-[11px] text-[#737373]">
-                          {locale === 'en' ? selectedMethod.description_en : selectedMethod.description_fr}
+                          {locale === 'en' ? selectedMethod.description_en : locale === 'ht' ? (selectedMethod.description_ht || selectedMethod.description_fr) : selectedMethod.description_fr}
                         </span>
                       </div>
                     </div>
@@ -862,7 +862,7 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
                   </div>
 
                   <p className="text-xs text-[#737373] leading-relaxed">
-                    {locale === 'en' ? selectedMethod.instructions_en : selectedMethod.instructions_fr}
+                    {locale === 'en' ? selectedMethod.instructions_en : locale === 'ht' ? (selectedMethod.instructions_ht || selectedMethod.instructions_fr) : selectedMethod.instructions_fr}
                   </p>
 
                   {(selectedMethod.additional_information_fr || selectedMethod.additional_information_en) && (
