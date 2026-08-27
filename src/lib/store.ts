@@ -202,7 +202,7 @@ class KayolaStore {
       if (!storedCategories) this.saveCategories();
       if (!storedPaymentMethods) this.savePaymentMethods();
       if (!storedOrders) this.saveOrders();
-      if (!storedSettings) this.saveSettings(INITIAL_SETTINGS);
+      if (!storedSettings) this.saveSettings(INITIAL_SETTINGS, true);
     } catch {
       this.artworks = INITIAL_ARTWORKS;
       this.categories = INITIAL_CATEGORIES;
