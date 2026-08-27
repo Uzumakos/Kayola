@@ -248,11 +248,14 @@ class KayolaStore {
     return { ...this.settings };
   }
 
-  public saveSettings(newSettings: Partial<GallerySettings>): GallerySettings {
-    this.settings = { ...this.settings, ...newSettings };
+  public saveSettings(newSettings: Partial<GallerySettings>, skipSync = false): GallerySettings {
+    const now = new Date().toISOString();
+    this.settings = { ...this.settings, ...newSettings, updated_at: now };
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(this.settings));
     this.notify();
-    syncSettingsToSupabase(this.settings).catch(e => console.warn(e));
+    if (!skipSync) {
+      syncSettingsToSupabase(this.settings).catch(e => console.warn(e));
+    }
     return { ...this.settings };
   }
 
@@ -346,7 +349,7 @@ class KayolaStore {
   public mergeSettings(remoteSettings: GallerySettings) {
     if (new Date(remoteSettings.updated_at || 0) > new Date(this.settings.updated_at || 0)) {
       this.settings = remoteSettings;
-      this.saveSettings(remoteSettings);
+      this.saveSettings(remoteSettings, true);
     }
   }
   // --- ARTWORKS ---
@@ -700,6 +703,7 @@ class KayolaStore {
     });
 
     this.saveOrders();
+    syncOrderToSupabase(order).catch(e => console.warn(e));
     return true;
   }
 
@@ -732,6 +736,7 @@ class KayolaStore {
     });
 
     this.saveOrders();
+    syncOrderToSupabase(order).catch(e => console.warn(e));
     return true;
   }
 
@@ -765,6 +770,8 @@ class KayolaStore {
 
     this.saveArtworks();
     this.saveOrders();
+    syncOrderToSupabase(order).catch(e => console.warn(e));
+    syncArtworkToSupabase(artwork).catch(e => console.warn(e));
     return true;
   }
 
