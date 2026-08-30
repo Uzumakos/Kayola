@@ -238,7 +238,7 @@ export const translations = {
       sendBtn: 'Envoyer le message',
       successMsg: 'Merci ! Votre message a bien été transmis. Notre équipe vous répondra sous 24 heures.',
       locationTitle: 'Emplacement de la Galerie',
-      locationText: 'Rue Ogé, Pétion-Ville, Local Phoenix Pharma, même bâtiment qu'Astérix',
+      locationText: "Rue Ogé, Pétion-Ville, Local Phoenix Pharma, même bâtiment qu'Astérix",
       phoneText: '+509 40 14 86 09 / +1 (800) KAYOLA',
       emailText: 'franklinfabiola17@gmail.com',
       hoursText: 'Du Lundi au Samedi : 10h00 – 19h00',
