@@ -19,7 +19,7 @@ const INITIAL_SETTINGS: GallerySettings = {
   logo_type: 'monogram',
   contact_email: 'franklinfabiola17@gmail.com',
   contact_phone: '+509 40 14 86 09',
-  address: 'Rue Ogé, Pétion-Ville, Local Phoenix Pharma, même bâtiment qu'Astérix',
+  address: 'Rue Ogé, Pétion-Ville, Local Phoenix Pharma, même bâtiment qu\'Astérix',
   about_images: [],
   updated_at: '1970-01-01T00:00:00.000Z',
 };
