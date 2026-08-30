@@ -192,4 +192,14 @@ export interface GallerySettings {
   updated_at?: string;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: 'unread' | 'read';
+  created_at: string;
+}
+
 // EOF

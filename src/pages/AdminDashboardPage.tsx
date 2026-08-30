@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { store } from '../lib/store';
-import { Artwork, Category, Order, PaymentMethod, PaymentProof, GallerySettings } from '../types';
+import { Artwork, Category, Order, PaymentMethod, PaymentProof, GallerySettings, ContactMessage } from '../types';
+import { fetchAllContactMessages, markContactMessageAsRead } from '../lib/supabase';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { KayolaLogo } from '../components/layout/KayolaLogo';
+import { AdminMessagesTab } from '../components/admin/AdminMessagesTab';
 import {
   LayoutDashboard,
   Palette,
@@ -38,6 +40,8 @@ import {
   Barcode,
   Hash,
   QrCode,
+  Mail,
+  MessageSquare,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -86,13 +90,14 @@ export const AdminDashboardPage: React.FC = () => {
   const [loginError, setLoginError] = useState(false);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'artworks' | 'categories' | 'payment_methods' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'artworks' | 'categories' | 'payment_methods' | 'settings' | 'messages'>('dashboard');
 
   // Data States
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
 
   // Gallery Settings & Logo State
   const [settings, setSettings] = useState<GallerySettings>(() => store.getSettings());
@@ -110,6 +115,9 @@ export const AdminDashboardPage: React.FC = () => {
 
   // Selected Order for Detail View
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  
+  // Selected Message
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
 
   // Modals
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
@@ -152,6 +160,12 @@ export const AdminDashboardPage: React.FC = () => {
     const unsubscribe = store.subscribe(refresh);
     return unsubscribe;
   }, [selectedOrder?.id]);
+
+  useEffect(() => {
+    if (activeTab === 'messages' && isLoggedIn) {
+      fetchAllContactMessages().then(setContactMessages);
+    }
+  }, [activeTab, isLoggedIn]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -639,6 +653,23 @@ export const AdminDashboardPage: React.FC = () => {
         >
           <CreditCard className="w-4 h-4" />
           <span>{t.admin.paymentMethods}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('messages')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            activeTab === 'messages'
+              ? 'bg-[#EF5A33] text-white shadow-xs'
+              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+          }`}
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>Messages</span>
+          {contactMessages.filter(m => m.status === 'unread').length > 0 && (
+            <span className="w-5 h-5 rounded-full bg-white text-[#EF5A33] font-extrabold text-[10px] flex items-center justify-center shadow-xs">
+              {contactMessages.filter(m => m.status === 'unread').length}
+            </span>
+          )}
         </button>
 
         <button
@@ -1349,6 +1380,14 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
           )}
         </div>
+      )}
+
+      {/* TAB: MESSAGES */}
+      {activeTab === 'messages' && (
+        <AdminMessagesTab 
+          messages={contactMessages} 
+          onMessagesChange={() => fetchAllContactMessages().then(setContactMessages)} 
+        />
       )}
 
       {/* TAB 6: SETTINGS & LOGO IDENTITY */}

@@ -69,10 +69,21 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
     dataUrl: string;
   } | null>(null);
 
-  // Confirmed Order Result
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Bot Protection States
+  const [botField, setBotField] = useState('');
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer: number;
+    if (cooldown > 0) {
+      timer = window.setTimeout(() => setCooldown(c => c - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   useEffect(() => {
     const art = store.getArtworkById(artworkId) || store.getArtworkBySlug(artworkId);
@@ -172,6 +183,18 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
   };
 
   const handleFinalOrderSubmit = (withImmediateProof = true) => {
+    if (cooldown > 0) {
+      toast(`Veuillez patienter ${cooldown} secondes.`, 'error');
+      return;
+    }
+
+    if (botField) {
+      // Honeypot triggered, silently discard
+      setIsSubmitting(false);
+      setStep(4); // Or fake success
+      return;
+    }
+
     if (withImmediateProof && !proofFile) {
       toast('Veuillez téléverser une preuve de paiement (reçu / capture) ou choisissez d\'ajouter plus tard.', 'error');
       return;
@@ -210,6 +233,7 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
         });
 
         toast(t.confirmation.title, 'success');
+        setCooldown(30); // 30 sec cooldown after order
       } else {
         toast(result.error || t.checkout.orderError, 'error');
       }
@@ -415,6 +439,20 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
                   <p className="text-xs text-[#737373] mt-1">
                     {t.checkout.customerInfo}
                   </p>
+                </div>
+
+                {/* HONEYPOT FIELD */}
+                <div className="absolute opacity-0 -z-10 w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                  <label htmlFor="company_website">Site Web (Ne pas remplir)</label>
+                  <input
+                    type="text"
+                    id="company_website"
+                    name="company_website"
+                    autoComplete="off"
+                    tabIndex={-1}
+                    value={botField}
+                    onChange={(e) => setBotField(e.target.value)}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { syncContactMessageToSupabase } from '../lib/supabase';
 
 export const ContactPage: React.FC = () => {
   const { t, toast } = useApp();
@@ -9,15 +10,74 @@ export const ContactPage: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  
+  // Security & Bot Prevention States
+  const [botField, setBotField] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    let timer: number;
+    if (cooldown > 0) {
+      timer = window.setTimeout(() => setCooldown(c => c - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !message) {
+    
+    // 1. Rate Limiting Check
+    if (cooldown > 0) {
+      toast(`Veuillez patienter ${cooldown} secondes avant de renvoyer un message.`, 'error');
+      return;
+    }
+
+    // 2. Honeypot Check (Bot Prevention)
+    if (botField) {
+      // Silently reject if bot field is filled, but pretend to succeed
+      setSubmitted(true);
+      return;
+    }
+
+    // 3. Validation
+    if (!name.trim() || !email.trim() || !message.trim()) {
       toast('Veuillez remplir tous les champs obligatoires.', 'error');
       return;
     }
-    setSubmitted(true);
-    toast(t.contact.successMsg, 'success');
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast('Veuillez entrer une adresse e-mail valide.', 'error');
+      return;
+    }
+
+    if (message.length < 10) {
+      toast('Votre message est trop court.', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // 4. Send to Supabase
+    const { success, error } = await syncContactMessageToSupabase({
+      name: name.trim(),
+      email: email.trim(),
+      subject: subject.trim(),
+      message: message.trim(),
+      status: 'unread'
+    });
+
+    setIsSubmitting(false);
+
+    if (success) {
+      setSubmitted(true);
+      setCooldown(60); // 60 seconds cooldown
+      toast(t.contact.successMsg || 'Message envoyé avec succès.', 'success');
+    } else {
+      toast('Une erreur est survenue lors de l\'envoi. Veuillez réessayer.', 'error');
+      console.error('Contact Form Error:', error);
+    }
   };
 
   return (
@@ -62,7 +122,20 @@ export const ContactPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 relative">
+              {/* HONEYPOT FIELD - INVISIBLE TO HUMANS */}
+              <div className="absolute opacity-0 -z-10 w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
+                <label htmlFor="company_website">Site Web (Ne pas remplir)</label>
+                <input
+                  type="text"
+                  id="company_website"
+                  name="company_website"
+                  autoComplete="off"
+                  tabIndex={-1}
+                  value={botField}
+                  onChange={(e) => setBotField(e.target.value)}
+                />
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-[#171717] block">
@@ -123,10 +196,21 @@ export const ContactPage: React.FC = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[#EF5A33] text-white font-semibold text-xs uppercase tracking-wider hover:bg-[#D94725] transition-all shadow-md"
+                  disabled={isSubmitting || cooldown > 0}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[#EF5A33] text-white font-semibold text-xs uppercase tracking-wider hover:bg-[#D94725] transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>{t.contact.sendBtn}</span>
+                  {isSubmitting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  <span>
+                    {isSubmitting 
+                      ? 'Envoi en cours...' 
+                      : cooldown > 0 
+                        ? `Patientez ${cooldown}s` 
+                        : t.contact.sendBtn}
+                  </span>
                 </button>
               </div>
             </form>

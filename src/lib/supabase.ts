@@ -392,4 +392,44 @@ export async function fetchSettingsFromSupabase(): Promise<GallerySettings | nul
   }
 }
 
+// --- CONTACT MESSAGES ---
+export async function syncContactMessageToSupabase(message: Omit<import('../types').ContactMessage, 'id' | 'created_at'>): Promise<{ success: boolean; error?: string }> {
+  if (!supabase || !isSupabaseConfigured) return { success: false, error: 'Supabase is not configured' };
+  try {
+    const { error } = await supabase.from('kayola_message').insert({
+      name: message.name,
+      email: message.email,
+      subject: message.subject,
+      message: message.message,
+      status: message.status,
+    });
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message };
+  }
+}
+
+export async function fetchAllContactMessages(): Promise<import('../types').ContactMessage[]> {
+  if (!supabase || !isSupabaseConfigured) return [];
+  try {
+    const { data, error } = await supabase.from('kayola_message').select('*').order('created_at', { ascending: false });
+    if (error) return [];
+    return (data as import('../types').ContactMessage[]) || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function markContactMessageAsRead(id: string): Promise<{ success: boolean; error?: string }> {
+  if (!supabase || !isSupabaseConfigured) return { success: false, error: 'Supabase is not configured' };
+  try {
+    const { error } = await supabase.from('kayola_message').update({ status: 'read' }).eq('id', id);
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message };
+  }
+}
+
 // EOF
