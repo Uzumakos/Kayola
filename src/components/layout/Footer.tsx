@@ -100,17 +100,17 @@ export const Footer: React.FC = () => {
             <div className="space-y-2 text-xs text-[#E8E6E2]/80">
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#EF5A33] shrink-0 mt-0.5" />
-                <span>KAYOLA Space, Port-au-Prince & Global Concierge</span>
+                <span>Rue Ogé, Pétion-Ville, Local Phoenix Pharma, même bâtiment qu'Astérix</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#EF5A33] shrink-0" />
-                <a href="mailto:contact@kayola-art.com" className="hover:text-[#EF5A33]">
-                  contact@kayola-art.com
+                <a href="mailto:franklinfabiola17@gmail.com" className="hover:text-[#EF5A33]">
+                  franklinfabiola17@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#EF5A33] shrink-0" />
-                <span>+509 3800-0000</span>
+                <span>+509 40 14 86 09</span>
               </div>
             </div>
           </div>

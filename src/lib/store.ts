@@ -17,9 +17,9 @@ const INITIAL_SETTINGS: GallerySettings = {
   tagline_en: 'Contemporary Art',
   logo_url: '',
   logo_type: 'monogram',
-  contact_email: 'contact@kayola-art.com',
-  contact_phone: '+509 3800-0000',
-  address: 'KAYOLA Space, Port-au-Prince & Global Concierge',
+  contact_email: 'franklinfabiola17@gmail.com',
+  contact_phone: '+509 40 14 86 09',
+  address: 'Rue Ogé, Pétion-Ville, Local Phoenix Pharma, même bâtiment qu'Astérix',
   about_images: [],
   updated_at: '1970-01-01T00:00:00.000Z',
 };
@@ -848,10 +848,10 @@ class KayolaStore {
     const hashed = await hashPassword(password);
     this.settings.admin_email = email;
     this.settings.admin_password_hash = hashed;
-    
+
     // Save to localStorage
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(this.settings));
-    
+
     // Sync to Supabase
     syncSettingsToSupabase(this.settings).catch(e => console.warn(e));
 
@@ -859,7 +859,7 @@ class KayolaStore {
     this.isAdminLoggedIn = true;
     localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
     this.notify();
-    
+
     return true;
   }
 

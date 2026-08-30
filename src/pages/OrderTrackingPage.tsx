@@ -77,10 +77,10 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
     try {
       // 1. Check local store first (instant)
       let order = store.findOrderForTracking(orderNumberInput, accessCodeInput);
-      
+
       // 2. Fetch from Supabase to get latest status or if not found locally
       const remoteOrder = await fetchOrderForTracking(orderNumberInput, accessCodeInput);
-      
+
       if (remoteOrder) {
         store.mergeOrders([remoteOrder]);
         // re-fetch from store to get populated artwork/payment_method
@@ -400,11 +400,10 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
               {/* Step 2: Proof Submitted */}
               <div className="relative">
                 <span
-                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${
-                    getTimelineStepStatus(1, currentOrder.status) === 'completed'
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-200 text-gray-500'
-                  }`}
+                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${getTimelineStepStatus(1, currentOrder.status) === 'completed'
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-gray-200 text-gray-500'
+                    }`}
                 >
                   {getTimelineStepStatus(1, currentOrder.status) === 'completed' ? '✓' : '2'}
                 </span>
@@ -423,21 +422,20 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
               {/* Step 3: Administrative Verification */}
               <div className="relative">
                 <span
-                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${
-                    getTimelineStepStatus(2, currentOrder.status) === 'completed'
-                      ? 'bg-emerald-500 text-white'
-                      : getTimelineStepStatus(2, currentOrder.status) === 'rejected'
+                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${getTimelineStepStatus(2, currentOrder.status) === 'completed'
+                    ? 'bg-emerald-500 text-white'
+                    : getTimelineStepStatus(2, currentOrder.status) === 'rejected'
                       ? 'bg-rose-500 text-white'
                       : getTimelineStepStatus(2, currentOrder.status) === 'current'
-                      ? 'bg-blue-500 text-white animate-pulse'
-                      : 'bg-gray-200 text-gray-500'
-                  }`}
+                        ? 'bg-blue-500 text-white animate-pulse'
+                        : 'bg-gray-200 text-gray-500'
+                    }`}
                 >
                   {getTimelineStepStatus(2, currentOrder.status) === 'completed'
                     ? '✓'
                     : getTimelineStepStatus(2, currentOrder.status) === 'rejected'
-                    ? '✕'
-                    : '3'}
+                      ? '✕'
+                      : '3'}
                 </span>
                 <div className="space-y-0.5">
                   <p className="font-serif font-bold text-sm text-[#171717]">
@@ -447,10 +445,10 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
                     {currentOrder.status === 'PAYMENT_REVIEW'
                       ? 'Vérification manuelle en cours par le commissaire.'
                       : currentOrder.status === 'PAYMENT_ACCEPTED' || currentOrder.status === 'SOLD'
-                      ? 'Vérification effectuée avec succès.'
-                      : currentOrder.status === 'PAYMENT_REJECTED'
-                      ? 'Preuve rejetée. Veuillez soumettre une nouvelle preuve ci-dessous.'
-                      : 'En attente de réception de la preuve.'}
+                        ? 'Vérification effectuée avec succès.'
+                        : currentOrder.status === 'PAYMENT_REJECTED'
+                          ? 'Preuve rejetée. Veuillez soumettre une nouvelle preuve ci-dessous.'
+                          : 'En attente de réception de la preuve.'}
                   </p>
                 </div>
               </div>
@@ -458,11 +456,10 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
               {/* Step 4: Payment Verified */}
               <div className="relative">
                 <span
-                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${
-                    getTimelineStepStatus(3, currentOrder.status) === 'completed'
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-200 text-gray-500'
-                  }`}
+                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${getTimelineStepStatus(3, currentOrder.status) === 'completed'
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-gray-200 text-gray-500'
+                    }`}
                 >
                   {getTimelineStepStatus(3, currentOrder.status) === 'completed' ? '✓' : '4'}
                 </span>
@@ -479,11 +476,10 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
               {/* Step 5: Sale Confirmed & Sold */}
               <div className="relative">
                 <span
-                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${
-                    currentOrder.status === 'SOLD'
-                      ? 'bg-[#171717] text-[#EF5A33]'
-                      : 'bg-gray-200 text-gray-500'
-                  }`}
+                  className={`absolute -left-[31px] sm:-left-[39px] top-0 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-xs ${currentOrder.status === 'SOLD'
+                    ? 'bg-[#171717] text-[#EF5A33]'
+                    : 'bg-gray-200 text-gray-500'
+                    }`}
                 >
                   {currentOrder.status === 'SOLD' ? '★' : '5'}
                 </span>
@@ -585,13 +581,12 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
                               </p>
                             </div>
                           </div>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${
-                            proof.status === 'VERIFIED'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : proof.status === 'REJECTED'
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${proof.status === 'VERIFIED'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : proof.status === 'REJECTED'
                               ? 'bg-rose-100 text-rose-800'
                               : 'bg-blue-100 text-blue-800'
-                          }`}>
+                            }`}>
                             {proof.status === 'VERIFIED' ? 'Vérifié' : proof.status === 'REJECTED' ? 'Rejeté' : 'En révision'}
                           </span>
                         </div>
@@ -748,14 +743,14 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ tokenParam
               Nos commissaires d’art sont à votre disposition pour vous assister dans le suivi de votre commande.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-1 text-xs font-semibold text-[#EF5A33]">
-              <a href="mailto:contact@kayola-art.com" className="inline-flex items-center gap-1.5 hover:underline">
+              <a href="mailto:franklinfabiola17@gmail.com" className="inline-flex items-center gap-1.5 hover:underline">
                 <Mail className="w-3.5 h-3.5" />
-                <span>contact@kayola-art.com</span>
+                <span>franklinfabiola17@gmail.com</span>
               </a>
               <span className="text-[#E8E6E2]">•</span>
               <a href="tel:+50938000000" className="inline-flex items-center gap-1.5 hover:underline">
                 <Phone className="w-3.5 h-3.5" />
-                <span>+509 3800-0000</span>
+                <span>+509 40 14 86 09</span>
               </a>
             </div>
           </div>

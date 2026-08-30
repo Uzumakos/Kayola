@@ -6,9 +6,9 @@ export const INITIAL_SETTINGS: GallerySettings = {
   tagline_en: 'Contemporary Art',
   logo_url: '',
   logo_type: 'monogram',
-  contact_email: 'contact@kayola-art.com',
-  contact_phone: '+509 3800-0000',
-  address: 'KAYOLA Space, Port-au-Prince & Global Concierge',
+  contact_email: 'franklinfabiola17@gmail.com',
+  contact_phone: '+509 40 14 86 09',
+  address: 'Rue Ogé, Pétion-Ville, Local Phoenix Pharma, même bâtiment qu'Astérix',
 };
 
 export const INITIAL_CATEGORIES: Category[] = [
@@ -616,4 +616,4 @@ export const INITIAL_ORDERS: Order[] = [
       },
     ],
   },
-];
+];

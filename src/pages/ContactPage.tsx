@@ -10,7 +10,7 @@ export const ContactPage: React.FC = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  
+
   // Security & Bot Prevention States
   const [botField, setBotField] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +26,7 @@ export const ContactPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // 1. Rate Limiting Check
     if (cooldown > 0) {
       toast(`Veuillez patienter ${cooldown} secondes avant de renvoyer un message.`, 'error');
@@ -45,7 +45,7 @@ export const ContactPage: React.FC = () => {
       toast('Veuillez remplir tous les champs obligatoires.', 'error');
       return;
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       toast('Veuillez entrer une adresse e-mail valide.', 'error');
@@ -58,7 +58,7 @@ export const ContactPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    
+
     // 4. Send to Supabase
     const { success, error } = await syncContactMessageToSupabase({
       name: name.trim(),
@@ -205,10 +205,10 @@ export const ContactPage: React.FC = () => {
                     <Send className="w-4 h-4" />
                   )}
                   <span>
-                    {isSubmitting 
-                      ? 'Envoi en cours...' 
-                      : cooldown > 0 
-                        ? `Patientez ${cooldown}s` 
+                    {isSubmitting
+                      ? 'Envoi en cours...'
+                      : cooldown > 0
+                        ? `Patientez ${cooldown}s`
                         : t.contact.sendBtn}
                   </span>
                 </button>
@@ -240,7 +240,7 @@ export const ContactPage: React.FC = () => {
                 <span className="font-bold text-[#171717] block text-sm">
                   Correspondance E-mail
                 </span>
-                <a href="mailto:contact@kayola-art.com" className="text-[#EF5A33] font-medium hover:underline">
+                <a href="mailto:franklinfabiola17@gmail.com" className="text-[#EF5A33] font-medium hover:underline">
                   {t.contact.emailText}
                 </a>
               </div>

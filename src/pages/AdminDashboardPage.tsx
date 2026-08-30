@@ -115,7 +115,7 @@ export const AdminDashboardPage: React.FC = () => {
 
   // Selected Order for Detail View
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  
+
   // Selected Message
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
 
@@ -170,7 +170,7 @@ export const AdminDashboardPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const isSetup = !store.getSettings().admin_email;
-    
+
     let ok = false;
     if (isSetup) {
       ok = await store.setupAdminCredentials(loginEmail, loginPassword);
@@ -495,7 +495,7 @@ export const AdminDashboardPage: React.FC = () => {
               {!store.getSettings().admin_email ? 'Configuration Administrateur' : t.admin.loginTitle}
             </h2>
             <p className="text-xs text-[#737373]">
-              {!store.getSettings().admin_email 
+              {!store.getSettings().admin_email
                 ? 'Configurez votre email et mot de passe pour sécuriser l\'accès.'
                 : t.admin.loginSubtitle}
             </p>
@@ -592,11 +592,10 @@ export const AdminDashboardPage: React.FC = () => {
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         <button
           onClick={() => setActiveTab('dashboard')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            activeTab === 'dashboard'
-              ? 'bg-[#EF5A33] text-white shadow-xs'
-              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
-          }`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'dashboard'
+            ? 'bg-[#EF5A33] text-white shadow-xs'
+            : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+            }`}
         >
           <LayoutDashboard className="w-4 h-4" />
           <span>{t.admin.dashboard}</span>
@@ -604,11 +603,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('orders')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            activeTab === 'orders'
-              ? 'bg-[#EF5A33] text-white shadow-xs'
-              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
-          }`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'orders'
+            ? 'bg-[#EF5A33] text-white shadow-xs'
+            : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+            }`}
         >
           <ShoppingBag className="w-4 h-4" />
           <span>{t.admin.orders}</span>
@@ -621,11 +619,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('artworks')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            activeTab === 'artworks'
-              ? 'bg-[#EF5A33] text-white shadow-xs'
-              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
-          }`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'artworks'
+            ? 'bg-[#EF5A33] text-white shadow-xs'
+            : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+            }`}
         >
           <Palette className="w-4 h-4" />
           <span>{t.admin.artworks} ({artworks.length})</span>
@@ -633,11 +630,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('categories')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            activeTab === 'categories'
-              ? 'bg-[#EF5A33] text-white shadow-xs'
-              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
-          }`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'categories'
+            ? 'bg-[#EF5A33] text-white shadow-xs'
+            : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+            }`}
         >
           <FolderKanban className="w-4 h-4" />
           <span>{t.admin.categories}</span>
@@ -645,11 +641,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('payment_methods')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            activeTab === 'payment_methods'
-              ? 'bg-[#EF5A33] text-white shadow-xs'
-              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
-          }`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'payment_methods'
+            ? 'bg-[#EF5A33] text-white shadow-xs'
+            : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+            }`}
         >
           <CreditCard className="w-4 h-4" />
           <span>{t.admin.paymentMethods}</span>
@@ -657,11 +652,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('messages')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            activeTab === 'messages'
-              ? 'bg-[#EF5A33] text-white shadow-xs'
-              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
-          }`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'messages'
+            ? 'bg-[#EF5A33] text-white shadow-xs'
+            : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+            }`}
         >
           <MessageSquare className="w-4 h-4" />
           <span>Messages</span>
@@ -674,11 +668,10 @@ export const AdminDashboardPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('settings')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            activeTab === 'settings'
-              ? 'bg-[#EF5A33] text-white shadow-xs'
-              : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
-          }`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${activeTab === 'settings'
+            ? 'bg-[#EF5A33] text-white shadow-xs'
+            : 'bg-white text-[#171717] border border-[#E8E6E2] hover:border-[#171717]'
+            }`}
         >
           <Settings className="w-4 h-4" />
           <span>{t.admin.settings} & Logo</span>
@@ -826,33 +819,29 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="flex items-center gap-2 overflow-x-auto">
               <button
                 onClick={() => setOrderFilter('all')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                  orderFilter === 'all' ? 'bg-[#171717] text-white' : 'bg-[#FAF9F6] text-[#737373]'
-                }`}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${orderFilter === 'all' ? 'bg-[#171717] text-white' : 'bg-[#FAF9F6] text-[#737373]'
+                  }`}
               >
                 {t.admin.ordersList.filterAll} ({orders.length})
               </button>
               <button
                 onClick={() => setOrderFilter('review')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                  orderFilter === 'review' ? 'bg-[#EF5A33] text-white' : 'bg-[#FAF9F6] text-[#737373]'
-                }`}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${orderFilter === 'review' ? 'bg-[#EF5A33] text-white' : 'bg-[#FAF9F6] text-[#737373]'
+                  }`}
               >
                 {t.admin.ordersList.filterReview}
               </button>
               <button
                 onClick={() => setOrderFilter('accepted')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                  orderFilter === 'accepted' ? 'bg-emerald-600 text-white' : 'bg-[#FAF9F6] text-[#737373]'
-                }`}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${orderFilter === 'accepted' ? 'bg-emerald-600 text-white' : 'bg-[#FAF9F6] text-[#737373]'
+                  }`}
               >
                 {t.admin.ordersList.filterAccepted}
               </button>
               <button
                 onClick={() => setOrderFilter('sold')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                  orderFilter === 'sold' ? 'bg-black text-[#EF5A33]' : 'bg-[#FAF9F6] text-[#737373]'
-                }`}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold ${orderFilter === 'sold' ? 'bg-black text-[#EF5A33]' : 'bg-[#FAF9F6] text-[#737373]'
+                  }`}
               >
                 {t.admin.ordersList.filterSold}
               </button>
@@ -1006,16 +995,16 @@ export const AdminDashboardPage: React.FC = () => {
                         images: art.images?.length
                           ? [...art.images]
                           : [
-                              {
-                                id: `img-${Date.now()}`,
-                                artwork_id: art.id,
-                                url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=85',
-                                alt_text_fr: 'Vue principale',
-                                alt_text_en: 'Primary view',
-                                sort_order: 1,
-                                is_primary: true,
-                              },
-                            ],
+                            {
+                              id: `img-${Date.now()}`,
+                              artwork_id: art.id,
+                              url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=85',
+                              alt_text_fr: 'Vue principale',
+                              alt_text_en: 'Primary view',
+                              sort_order: 1,
+                              is_primary: true,
+                            },
+                          ],
                       });
                       setArtworkModalOpen(true);
                     }}
@@ -1234,9 +1223,8 @@ export const AdminDashboardPage: React.FC = () => {
                 return (
                   <div
                     key={method.id}
-                    className={`p-6 bg-[#FAF9F6] rounded-3xl border transition-all space-y-5 flex flex-col justify-between ${
-                      method.is_active ? 'border-[#E8E6E2] shadow-xs' : 'border-gray-200 opacity-75'
-                    }`}
+                    className={`p-6 bg-[#FAF9F6] rounded-3xl border transition-all space-y-5 flex flex-col justify-between ${method.is_active ? 'border-[#E8E6E2] shadow-xs' : 'border-gray-200 opacity-75'
+                      }`}
                   >
                     <div className="space-y-4">
                       {/* Card Header: Logo/Icon + Name + Actions */}
@@ -1352,11 +1340,10 @@ export const AdminDashboardPage: React.FC = () => {
                     {/* Bottom Status & Quick Toggle */}
                     <div className="pt-2 flex items-center justify-between border-t border-[#E8E6E2]/60">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-                          method.is_active
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-gray-200 text-gray-700'
-                        }`}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${method.is_active
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-gray-200 text-gray-700'
+                          }`}
                       >
                         <span className={`w-1.5 h-1.5 rounded-full ${method.is_active ? 'bg-emerald-600' : 'bg-gray-500'}`} />
                         <span>{method.is_active ? 'Actif sur le Checkout' : 'Désactivé (Masqué)'}</span>
@@ -1365,11 +1352,10 @@ export const AdminDashboardPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleTogglePaymentMethod(method.id)}
-                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                          method.is_active
-                            ? 'bg-white border border-[#E8E6E2] text-[#737373] hover:text-[#171717]'
-                            : 'bg-[#171717] text-white hover:bg-black'
-                        }`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${method.is_active
+                          ? 'bg-white border border-[#E8E6E2] text-[#737373] hover:text-[#171717]'
+                          : 'bg-[#171717] text-white hover:bg-black'
+                          }`}
                       >
                         {method.is_active ? 'Désactiver' : 'Activer'}
                       </button>
@@ -1384,9 +1370,9 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* TAB: MESSAGES */}
       {activeTab === 'messages' && (
-        <AdminMessagesTab 
-          messages={contactMessages} 
-          onMessagesChange={() => fetchAllContactMessages().then(setContactMessages)} 
+        <AdminMessagesTab
+          messages={contactMessages}
+          onMessagesChange={() => fetchAllContactMessages().then(setContactMessages)}
         />
       )}
 
@@ -1483,11 +1469,10 @@ export const AdminDashboardPage: React.FC = () => {
                           setLogoUrlInput(preset.url);
                           setLogoImageLoadError(false);
                         }}
-                        className={`flex items-center gap-2.5 p-2 rounded-xl border text-left text-xs transition-all ${
-                          logoUrlInput === preset.url
-                            ? 'bg-[#EF5A33]/10 border-[#EF5A33] text-[#EF5A33] font-semibold'
-                            : 'bg-[#FAF9F6] border-[#E8E6E2] text-[#171717] hover:border-[#171717]'
-                        }`}
+                        className={`flex items-center gap-2.5 p-2 rounded-xl border text-left text-xs transition-all ${logoUrlInput === preset.url
+                          ? 'bg-[#EF5A33]/10 border-[#EF5A33] text-[#EF5A33] font-semibold'
+                          : 'bg-[#FAF9F6] border-[#E8E6E2] text-[#171717] hover:border-[#171717]'
+                          }`}
                       >
                         <div className="w-7 h-7 rounded-full overflow-hidden bg-white border border-[#E8E6E2] shrink-0">
                           <img src={preset.url} alt={preset.label} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -1560,7 +1545,7 @@ export const AdminDashboardPage: React.FC = () => {
                       + Ajouter une image
                     </button>
                   </div>
-                  
+
                   {aboutImagesInput.length === 0 ? (
                     <p className="text-xs text-[#737373]">Aucune image. Une image par défaut sera utilisée.</p>
                   ) : (
@@ -1609,7 +1594,7 @@ export const AdminDashboardPage: React.FC = () => {
                         type="email"
                         value={contactEmailInput}
                         onChange={(e) => setContactEmailInput(e.target.value)}
-                        placeholder="contact@kayola-art.com"
+                        placeholder="franklinfabiola17@gmail.com"
                         className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
                       />
                     </div>
@@ -1622,7 +1607,7 @@ export const AdminDashboardPage: React.FC = () => {
                         type="tel"
                         value={contactPhoneInput}
                         onChange={(e) => setContactPhoneInput(e.target.value)}
-                        placeholder="+509 3800-0000"
+                        placeholder="+509 40 14 86 09"
                         className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
                       />
                     </div>
@@ -1669,22 +1654,20 @@ export const AdminDashboardPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setPreviewMode('light')}
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                        previewMode === 'light'
-                          ? 'bg-white text-[#171717] shadow-2xs font-semibold'
-                          : 'text-[#737373] hover:text-[#171717]'
-                      }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${previewMode === 'light'
+                        ? 'bg-white text-[#171717] shadow-2xs font-semibold'
+                        : 'text-[#737373] hover:text-[#171717]'
+                        }`}
                     >
                       En-tête (Clair)
                     </button>
                     <button
                       type="button"
                       onClick={() => setPreviewMode('dark')}
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                        previewMode === 'dark'
-                          ? 'bg-[#171717] text-white shadow-2xs font-semibold'
-                          : 'text-[#737373] hover:text-[#171717]'
-                      }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${previewMode === 'dark'
+                        ? 'bg-[#171717] text-white shadow-2xs font-semibold'
+                        : 'text-[#737373] hover:text-[#171717]'
+                        }`}
                     >
                       Pied de page (Sombre)
                     </button>
@@ -1693,11 +1676,10 @@ export const AdminDashboardPage: React.FC = () => {
 
                 {/* Preview Surface */}
                 <div
-                  className={`p-6 rounded-2xl border transition-all flex flex-col items-center justify-center min-h-[180px] space-y-4 text-center ${
-                    previewMode === 'dark'
-                      ? 'bg-[#171717] border-black text-white'
-                      : 'bg-[#FAF9F6] border-[#E8E6E2] text-[#171717]'
-                  }`}
+                  className={`p-6 rounded-2xl border transition-all flex flex-col items-center justify-center min-h-[180px] space-y-4 text-center ${previewMode === 'dark'
+                    ? 'bg-[#171717] border-black text-white'
+                    : 'bg-[#FAF9F6] border-[#E8E6E2] text-[#171717]'
+                    }`}
                 >
                   {/* Dynamic Logo rendering based on input or store */}
                   {logoUrlInput.trim() && !logoImageLoadError ? (
@@ -1713,16 +1695,14 @@ export const AdminDashboardPage: React.FC = () => {
                       </div>
                       <div className="flex flex-col text-left">
                         <span
-                          className={`font-black tracking-tighter uppercase text-xl ${
-                            previewMode === 'dark' ? 'text-white' : 'text-[#171717]'
-                          }`}
+                          className={`font-black tracking-tighter uppercase text-xl ${previewMode === 'dark' ? 'text-white' : 'text-[#171717]'
+                            }`}
                         >
                           {galleryNameInput || 'KAYOLA'}
                         </span>
                         <span
-                          className={`text-[9px] uppercase tracking-[0.25em] font-medium -mt-1 ${
-                            previewMode === 'dark' ? 'text-white/60' : 'text-[#171717]/50'
-                          }`}
+                          className={`text-[9px] uppercase tracking-[0.25em] font-medium -mt-1 ${previewMode === 'dark' ? 'text-white/60' : 'text-[#171717]/50'
+                            }`}
                         >
                           {taglineFrInput || 'Art Contemporain'}
                         </span>
@@ -1739,16 +1719,14 @@ export const AdminDashboardPage: React.FC = () => {
                       </div>
                       <div className="flex flex-col text-left">
                         <span
-                          className={`font-black tracking-tighter uppercase text-xl ${
-                            previewMode === 'dark' ? 'text-white' : 'text-[#171717]'
-                          }`}
+                          className={`font-black tracking-tighter uppercase text-xl ${previewMode === 'dark' ? 'text-white' : 'text-[#171717]'
+                            }`}
                         >
                           {galleryNameInput || 'KAYOLA'}
                         </span>
                         <span
-                          className={`text-[9px] uppercase tracking-[0.25em] font-medium -mt-1 ${
-                            previewMode === 'dark' ? 'text-white/60' : 'text-[#171717]/50'
-                          }`}
+                          className={`text-[9px] uppercase tracking-[0.25em] font-medium -mt-1 ${previewMode === 'dark' ? 'text-white/60' : 'text-[#171717]/50'
+                            }`}
                         >
                           {taglineFrInput || 'Art Contemporain'}
                         </span>
@@ -2228,16 +2206,16 @@ export const AdminDashboardPage: React.FC = () => {
                         const updated = editingArtwork.images?.length
                           ? editingArtwork.images.map((img, i) => (i === 0 ? { ...img, url: newUrl } : img))
                           : [
-                              {
-                                id: `img-${Date.now()}`,
-                                artwork_id: editingArtwork.id || '',
-                                url: newUrl,
-                                alt_text_fr: editingArtwork.title_fr || 'Vue principale',
-                                alt_text_en: editingArtwork.title_en || 'Primary view',
-                                sort_order: 1,
-                                is_primary: true,
-                              },
-                            ];
+                            {
+                              id: `img-${Date.now()}`,
+                              artwork_id: editingArtwork.id || '',
+                              url: newUrl,
+                              alt_text_fr: editingArtwork.title_fr || 'Vue principale',
+                              alt_text_en: editingArtwork.title_en || 'Primary view',
+                              sort_order: 1,
+                              is_primary: true,
+                            },
+                          ];
                         setEditingArtwork({ ...editingArtwork, images: updated });
                         setArtworkImageLoadError(false);
                       }}
@@ -2260,16 +2238,16 @@ export const AdminDashboardPage: React.FC = () => {
                             const updated = editingArtwork.images?.length
                               ? editingArtwork.images.map((img, i) => (i === 0 ? { ...img, url: preset.url } : img))
                               : [
-                                  {
-                                    id: `img-${Date.now()}`,
-                                    artwork_id: editingArtwork.id || '',
-                                    url: preset.url,
-                                    alt_text_fr: editingArtwork.title_fr || 'Vue principale',
-                                    alt_text_en: editingArtwork.title_en || 'Primary view',
-                                    sort_order: 1,
-                                    is_primary: true,
-                                  },
-                                ];
+                                {
+                                  id: `img-${Date.now()}`,
+                                  artwork_id: editingArtwork.id || '',
+                                  url: preset.url,
+                                  alt_text_fr: editingArtwork.title_fr || 'Vue principale',
+                                  alt_text_en: editingArtwork.title_en || 'Primary view',
+                                  sort_order: 1,
+                                  is_primary: true,
+                                },
+                              ];
                             setEditingArtwork({ ...editingArtwork, images: updated });
                             setArtworkImageLoadError(false);
                           }}
