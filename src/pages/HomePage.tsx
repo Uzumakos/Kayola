@@ -79,47 +79,30 @@ export const HomePage: React.FC = () => {
               transition={{ duration: 0.7 }}
               className="lg:col-span-7 space-y-6 sm:space-y-8 text-center lg:text-left"
             >
-              <h1 className="font-serif italic text-4xl sm:text-6xl lg:text-7xl font-normal tracking-tight leading-[1.08]">
-                {t.hero.title}
+              <h1 className="font-serif italic text-4xl sm:text-5xl lg:text-7xl font-normal tracking-tight leading-[1.08] text-white">
+                <span className="block">{t.hero.titleLine1 || 'KAYOLA / Art'}</span>
+                <span className="block text-[#EF5A33]">{t.hero.titleLine2 || 'for Social Impact'}</span>
               </h1>
 
-              <p className="text-base sm:text-xl text-white/70 max-w-2xl font-normal leading-relaxed mx-auto lg:mx-0 font-sans">
-                {t.hero.subtitle}
-              </p>
+              <div className="space-y-4">
+                <p className="text-xl sm:text-2xl text-[#EF5A33] font-serif italic">
+                  {t.hero.subtitle || 'Art that gives back.'}
+                </p>
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-white/90">
+                  {t.hero.hook || 'Créer. Donner. Impact.'}
+                </p>
+                <p className="text-base sm:text-lg text-white/70 max-w-xl font-normal leading-relaxed mx-auto lg:mx-0 font-sans">
+                  {t.hero.description || 'Chaque œuvre est une histoire. Chaque achat contribue à faire une différence.'}
+                </p>
+              </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
                 <button
                   onClick={() => navigate(`/${locale}/gallery`)}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#EF5A33] text-white font-bold text-xs uppercase tracking-widest hover:bg-[#D94725] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
                 >
-                  <span>{t.hero.exploreBtn}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{t.hero.exploreBtn || 'Découvrir la collection →'}</span>
                 </button>
-
-                <button
-                  onClick={() => navigate(`/${locale}/order/track`)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-widest border border-white/15 transition-all"
-                >
-                  <Compass className="w-4 h-4 text-[#EF5A33]" />
-                  <span>{t.hero.trackOrderBtn}</span>
-                </button>
-              </div>
-
-              {/* Assurance mini badges */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 text-left">
-
-                <div>
-                  <p className="text-xs uppercase font-bold tracking-wider text-white">
-                    Règlement Direct
-                  </p>
-                  <p className="text-[11px] text-white/50">MonCash, NatCash, Virements</p>
-                </div>
-                <div>
-                  <p className="text-xs uppercase font-bold tracking-wider text-white">
-                    Livraison Soignée
-                  </p>
-                  <p className="text-[11px] text-white/50">Protection de transport d'art</p>
-                </div>
               </div>
             </motion.div>
 
@@ -193,8 +176,8 @@ export const HomePage: React.FC = () => {
                                   setCurrentArtIndex(idx);
                                 }}
                                 className={`h-1.5 rounded-full transition-all duration-500 ${idx === (currentArtIndex % Math.min(artworks.length, 8))
-                                    ? 'w-6 bg-[#EF5A33]'
-                                    : 'w-1.5 bg-white/20 hover:bg-white/40'
+                                  ? 'w-6 bg-[#EF5A33]'
+                                  : 'w-1.5 bg-white/20 hover:bg-white/40'
                                   }`}
                                 title={art.title_fr}
                               />
@@ -241,171 +224,186 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. CURATED FEATURED ARTWORKS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#1A1A1A]/10 pb-6">
-          <div className="space-y-2">
-            <span className="text-xs font-black uppercase tracking-[0.2em] text-[#EF5A33]">
-              Sélection du Commissaire
-            </span>
-            <h2 className="font-serif italic text-3xl sm:text-5xl font-normal text-[#1A1A1A]">
-              {t.featured.sectionTitle}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#1A1A1A]/60 max-w-xl">
-              {t.featured.sectionSubtitle}
-            </p>
-          </div>
+      {/* 2. COMMERCIAL CORE SECTION */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 pt-10">
+        <h2 className="font-serif italic text-3xl sm:text-5xl font-normal text-[#1A1A1A]">
+          {t.commercialCore?.title || 'ACHETE UNE ŒUVRE. CONTRIBUE À UNE CAUSE.'}
+        </h2>
+        <p className="text-lg sm:text-xl text-[#1A1A1A]/70 leading-relaxed font-sans max-w-3xl mx-auto">
+          {t.commercialCore?.paragraph || "KayOla est un projet d'art social qui utilise la créativité pour contribuer à la vie des autres. Quand vous achetez une œuvre, vous ne ramenez pas seulement une pièce d'art chez vous. Vous participez à une cause sociale qui dépasse l'œuvre."}
+        </p>
+      </section>
 
-          <button
-            onClick={() => navigate(`/${locale}/gallery`)}
-            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1A1A1A] hover:text-[#EF5A33] transition-colors self-start sm:self-auto border-b border-[#1A1A1A] pb-0.5"
-          >
-            <span>{t.featured.viewAll}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+      {/* 3. MISSION & PERSONAL STORY SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 mt-10">
+        <div className="bg-[#FAF9F6] rounded-3xl p-8 sm:p-16 lg:p-20 border border-[#1A1A1A]/10 shadow-sm relative overflow-hidden">
+            {/* Decorative element */}
+            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+              <Compass className="w-64 h-64 text-[#1A1A1A]" />
+            </div>
+            
+            <div className="relative z-10 max-w-3xl mx-auto space-y-10">
+              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-[#EF5A33] text-center">
+                {t.mission?.title || 'POURQUOI KAYOLA EXISTE ?'}
+              </h2>
+              
+              <div className="relative">
+                <div className="absolute -left-6 sm:-left-12 top-0 text-6xl text-[#EF5A33]/20 font-serif leading-none">"</div>
+                <p className="text-lg sm:text-2xl text-[#1A1A1A] font-serif italic leading-relaxed">
+                  {t.mission?.storytelling || "Pendant toutes mes années scolaires et universitaires, j’ai eu la chance de recevoir des bourses d’excellence qui m’ont permis de poursuivre mes études sans que les frais de scolarité deviennent un obstacle. Je sais ce que cela signifie de pouvoir continuer à apprendre parce que quelqu’un, quelque part, a choisi d’investir en vous. Aujourd’hui, je veux à mon tour redonner une partie de ce que j’ai reçu."}
+                </p>
+              </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredArtworks.map((artwork) => (
-            <ArtworkCard key={artwork.id} artwork={artwork} />
-          ))}
+              <div className="space-y-4 pt-8 border-t border-[#1A1A1A]/10 text-center">
+                <p className="text-base sm:text-lg font-bold text-[#1A1A1A]">
+                  {t.mission?.mantra || "KayOla est né de cette conviction : utiliser ce que je sais créer pour contribuer à offrir des opportunités à d’autres. Je crée. Vous achetez. Ensemble, nous donnons."}
+                </p>
+                <p className="text-sm font-serif italic text-[#1A1A1A]/60">
+                  {t.mission?.closing || "I am giving back to life what I received."}
+                </p>
+              </div>
+            </div>
         </div>
       </section>
 
-      {/* 3. CATEGORIES & MEDIUMS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-xs font-black uppercase tracking-[0.2em] text-[#EF5A33]">
-            {t.categories.sectionSubtitle}
-          </span>
-          <h2 className="font-serif italic text-3xl sm:text-5xl font-normal text-[#1A1A1A]">
-            {t.categories.sectionTitle}
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((cat) => {
-            const name = locale === 'en' ? cat.name_en : locale === 'ht' ? (cat.name_ht || cat.name_fr) : cat.name_fr;
-            const desc = locale === 'en' ? cat.description_en : locale === 'ht' ? (cat.description_ht || cat.description_fr) : cat.description_fr;
-            return (
-              <div
-                key={cat.id}
-                onClick={() => navigate(`/${locale}/gallery?category=${cat.id}`)}
-                className="group cursor-pointer bg-white rounded-2xl overflow-hidden border border-[#1A1A1A]/10 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
-              >
-                <div className="aspect-4/3 overflow-hidden bg-[#FAF9F6]">
-                  <img
-                    src={cat.image_url}
-                    alt={name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+      {/* 4. FIRST COLLECTION & SCARCITY SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 mt-20">
+          <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+            <div className="flex-1 space-y-6">
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-[#EF5A33]">
+                  Première Collection
+                </span>
+                <h2 className="font-serif italic text-4xl sm:text-6xl font-normal text-[#1A1A1A] leading-tight">
+                  {t.collectionHighlights?.name || "LES SAISONS D’UNE VIE"}
+                </h2>
+                <p className="text-sm font-bold uppercase tracking-wider text-[#1A1A1A]/80 bg-[#1A1A1A]/5 inline-block px-4 py-2 rounded-lg">
+                  {t.collectionHighlights?.scarcity || "10 ŒUVRES. UNE COLLECTION UNIQUE. Chaque œuvre appartient à une collection limitée de 10 pièces. Une fois vendue, elle ne sera plus disponible. Choisissez celle qui raconte quelque chose de votre propre histoire."}
+                </p>
+                <p className="text-lg text-[#1A1A1A]/70 leading-relaxed">
+                  {t.collectionHighlights?.poeticDesc || "10 tableaux. 10 moments. Une seule vie. Une collection qui nous invite à nous rappeler ce qui est vraiment important : vivre, aimer, pardonner. Parce que nous ne savons jamais quand le fil de la vie peut se briser."}
+                </p>
+                <div className="pt-4">
+                  <button
+                    onClick={() => navigate(`/${locale}/gallery`)}
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1A1A1A] hover:text-[#EF5A33] transition-colors border-b border-[#1A1A1A] pb-0.5"
+                  >
+                    <span>Découvrir la collection complète</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-3 bg-[#FAF9F6]/50">
-                  <div>
-                    <h3 className="font-serif italic font-medium text-xl text-[#1A1A1A] group-hover:text-[#EF5A33] transition-colors">
-                      {name}
-                    </h3>
-                    <p className="text-xs text-[#1A1A1A]/60 mt-1 line-clamp-2">
-                      {desc}
-                    </p>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1A1A1A] group-hover:text-[#EF5A33]">
-                    <span>Découvrir</span>
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            </div>
+            
+            <div className="flex-1 w-full relative">
+                <div className="aspect-square sm:aspect-4/3 rounded-2xl overflow-hidden bg-[#222222] relative group shadow-xl border border-[#1A1A1A]/10">
+                  {artworks[0] ? (
+                      <img 
+                        src={artworks[0].images[0]?.url} 
+                        alt="Collection Art" 
+                        className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
+                      />
+                  ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] flex items-center justify-center text-white/20">
+                          <Compass className="w-16 h-16" />
+                      </div>
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-xl border border-white/20 text-white font-serif italic text-2xl shadow-2xl">
+                        10/10
+                      </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+            </div>
+          </div>
       </section>
 
-      {/* 4. GALLERY COMMITMENTS / TRUST GRID */}
-      <section className="bg-white border-y border-[#1A1A1A]/10 py-16 sm:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-black uppercase tracking-[0.2em] text-[#EF5A33]">
-              L'Expérience KAYOLA
-            </span>
-            <h2 className="font-serif italic text-3xl sm:text-5xl font-normal text-[#1A1A1A]">
-              L’Art dans les Règles de l’Art
+      {/* 5. VISUAL IMPACT SECTION */}
+      <section className="bg-[#1A1A1A] py-20 mt-20 text-white border-y border-white/10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          <div className="text-center">
+            <h2 className="font-serif italic text-3xl sm:text-5xl font-normal text-white max-w-3xl mx-auto">
+              {t.visualImpact?.title || "VOTRE ACHAT FAIT PLUS QUE VOUS APPARTENIR À UNE ŒUVRE."}
             </h2>
-            <p className="text-xs sm:text-sm text-[#1A1A1A]/60">
-              Un processus transparent, rigoureux et hautement sécurisé pour les collectionneurs.
-            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-8 relative">
+              {/* Desktop connecting line */}
+              <div className="hidden sm:block absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-y-1/2" />
+              
+              {/* Step 1 */}
+              <div className="relative flex flex-col items-center text-center space-y-4 w-full sm:w-1/4 z-10 group">
+                <div className="w-16 h-16 rounded-2xl bg-[#2A2A2A] border border-white/10 flex items-center justify-center text-white group-hover:bg-[#EF5A33] group-hover:border-[#EF5A33] group-hover:-translate-y-1 transition-all duration-300">
+                    <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <p className="text-sm font-bold uppercase tracking-wider text-white">
+                  {t.visualImpact?.step1 || "1 œuvre achetée"}
+                </p>
+              </div>
+              
+              {/* Mobile arrow */}
+              <div className="sm:hidden text-white/30">↓</div>
+
+              {/* Step 2 */}
+              <div className="relative flex flex-col items-center text-center space-y-4 w-full sm:w-1/4 z-10 group">
+                <div className="w-16 h-16 rounded-2xl bg-[#2A2A2A] border border-white/10 flex items-center justify-center text-white group-hover:bg-[#EF5A33] group-hover:border-[#EF5A33] group-hover:-translate-y-1 transition-all duration-300">
+                    <ArrowRight className="w-8 h-8 rotate-90 sm:rotate-0" />
+                </div>
+                <p className="text-sm font-bold uppercase tracking-wider text-white">
+                  {t.visualImpact?.step2 || "Une partie reversée à une initiative sociale"}
+                </p>
+              </div>
+              
+              {/* Mobile arrow */}
+              <div className="sm:hidden text-white/30">↓</div>
+
+              {/* Step 3 */}
+              <div className="relative flex flex-col items-center text-center space-y-4 w-full sm:w-1/4 z-10 group">
+                <div className="w-16 h-16 rounded-2xl bg-[#2A2A2A] border border-white/10 flex items-center justify-center text-white group-hover:bg-[#EF5A33] group-hover:border-[#EF5A33] group-hover:-translate-y-1 transition-all duration-300">
+                    <Award className="w-8 h-8" />
+                </div>
+                <p className="text-sm font-bold uppercase tracking-wider text-white">
+                  {t.visualImpact?.step3 || "Des ressources pour une cause sociale"}
+                </p>
+              </div>
+              
+              {/* Mobile arrow */}
+              <div className="sm:hidden text-white/30">↓</div>
+
+              {/* Step 4 */}
+              <div className="relative flex flex-col items-center text-center space-y-4 w-full sm:w-1/4 z-10 group">
+                <div className="w-16 h-16 rounded-2xl bg-[#2A2A2A] border border-white/10 flex items-center justify-center text-white group-hover:bg-[#EF5A33] group-hover:border-[#EF5A33] group-hover:-translate-y-1 transition-all duration-300">
+                    <Compass className="w-8 h-8" />
+                </div>
+                <p className="text-sm font-bold uppercase tracking-wider text-white">
+                  {t.visualImpact?.step4 || "Un impact qui continue au-delà de la toile"}
+                </p>
+              </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-[#F5F4F0] border border-[#1A1A1A]/10 space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#1A1A1A] text-white flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-[#EF5A33]" />
+          <div className="flex justify-center pt-8">
+              <div className="inline-flex items-center justify-center bg-white text-[#1A1A1A] font-bold text-sm uppercase tracking-widest px-8 py-5 rounded-full shadow-2xl">
+                {t.visualImpact?.highlight || "Objectif : contribuer à financer 400 sacs scolaires. 🎒"}
               </div>
-              <h3 className="font-serif italic font-medium text-2xl text-[#1A1A1A]">
-                Authenticité & Traçabilité
-              </h3>
-              <p className="text-xs sm:text-sm text-[#1A1A1A]/70 leading-relaxed">
-                Chaque œuvre est signée et accompagnée d'un certificat d’authenticité physique délivré par la galerie et l’artiste.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-2xl bg-[#F5F4F0] border border-[#1A1A1A]/10 space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#1A1A1A] text-white flex items-center justify-center">
-                <Award className="w-6 h-6 text-[#EF5A33]" />
-              </div>
-              <h3 className="font-serif italic font-medium text-2xl text-[#1A1A1A]">
-                Paiement Direct & Vérifié
-              </h3>
-              <p className="text-xs sm:text-sm text-[#1A1A1A]/70 leading-relaxed">
-                Réglez par MonCash, NatCash ou virement bancaire. Notre équipe valide manuellement chaque preuve pour sécuriser votre acquisition.
-              </p>
-            </div>
-
-            <div className="p-8 rounded-2xl bg-[#F5F4F0] border border-[#1A1A1A]/10 space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#1A1A1A] text-white flex items-center justify-center">
-                <Compass className="w-6 h-6 text-[#EF5A33]" />
-              </div>
-              <h3 className="font-serif italic font-medium text-2xl text-[#1A1A1A]">
-                Suivi Privé en Temps Réel
-              </h3>
-              <p className="text-xs sm:text-sm text-[#1A1A1A]/70 leading-relaxed">
-                Accédez à votre espace collectionneur sans création de compte complexe grâce à votre code d'accès unique.
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* 5. CALL TO ACTION BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl overflow-hidden bg-[#1A1A1A] text-white p-8 sm:p-16 border border-white/10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="space-y-3 text-center md:text-left max-w-xl">
-            <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#EF5A33]">
-              Acquisitions Privées
-            </span>
-            <h2 className="font-serif italic text-3xl sm:text-5xl font-normal leading-tight">
-              Trouvez l’œuvre qui transformera votre espace.
-            </h2>
-            <p className="text-xs sm:text-sm text-white/70">
-              Notre catalogue réunit des peintures, sculptures et photographies rares créées par des artistes d’exception.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <button
-              onClick={() => navigate(`/${locale}/gallery`)}
-              className="px-8 py-4 rounded-full bg-[#EF5A33] text-white font-bold text-xs uppercase tracking-widest hover:bg-[#D94725] transition-all shadow-lg"
-            >
-              Parcourir le catalogue
-            </button>
-            <button
-              onClick={() => navigate(`/${locale}/contact`)}
-              className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-widest border border-white/15 transition-all"
-            >
-              Contacter la galerie
-            </button>
-          </div>
-        </div>
+      {/* 6. COMMITMENT & TRANSPARENCY SECTION */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 mt-20">
+        <ShieldCheck className="w-16 h-16 text-[#EF5A33] mx-auto opacity-80" />
+        <h2 className="font-serif italic text-3xl sm:text-4xl font-normal text-[#1A1A1A]">
+          {t.commitment?.title || "L’ART, MAIS AUSSI LA TRANSPARENCE."}
+        </h2>
+        <p className="text-base sm:text-lg text-[#1A1A1A]/70 leading-relaxed font-sans">
+          {t.commitment?.text || "Nous voulons que chaque achat soit simple, mais aussi que son impact soit clair. Une partie des revenus de cette collection sera consacrée au projet social annoncé par KayOla. À la fin du projet, nous partagerons les résultats et l’impact généré."}
+        </p>
       </section>
+
+      {/* CROSS-SECTION BRANDING ELEMENTS / SIGNATURES */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mt-10 border-t border-[#1A1A1A]/10 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 text-xs font-bold uppercase tracking-[0.2em] text-[#1A1A1A]/40">
+          <span>{t.signatures?.sig1 || "L'art pour servir les autres."}</span>
+          <span className="hidden sm:inline">•</span>
+          <span>{t.signatures?.sig2 || "Créer. Donner. Impact."}</span>
+      </div>
     </div>
   );
 };

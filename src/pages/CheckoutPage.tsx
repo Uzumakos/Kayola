@@ -25,6 +25,8 @@ import {
   Key,
   Lock,
   BookmarkCheck,
+  MapPin,
+  CheckCircle2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -49,6 +51,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ artworkId }) => {
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('Haïti');
   const [notes, setNotes] = useState('');
+  const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
+  
+  const settings = store.getSettings();
 
   // Selected Payment Method
   const [selectedMethodId, setSelectedMethodId] = useState<string>('');
@@ -186,6 +191,7 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
         country,
         notes,
         paymentMethodId: selectedMethod.id,
+        deliveryMethod,
         proofFile: withImmediateProof && proofFile ? proofFile : undefined,
         orderNumber: assignedCredentials?.orderNumber,
         accessCode: assignedCredentials?.accessCode,
@@ -521,6 +527,70 @@ Instructions : Indiquez "${assignedCredentials.orderNumber}" comme motif de vire
                       placeholder="Instructions spécifiques pour la livraison ou la remise..."
                       className="w-full px-4 py-3 bg-[#FAF9F6] border border-[#E8E6E2] rounded-xl text-sm focus:outline-hidden focus:border-[#EF5A33]"
                     />
+                  </div>
+
+                  {/* Delivery Method Selection */}
+                  <div className="sm:col-span-2 pt-2 border-t border-[#E8E6E2]">
+                    <label className="text-xs font-semibold text-[#171717] block mb-3">
+                      Mode de réception *
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMethod('delivery')}
+                        className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                          deliveryMethod === 'delivery' 
+                            ? 'border-[#EF5A33] bg-[#EF5A33]/5 ring-1 ring-[#EF5A33]' 
+                            : 'border-[#E8E6E2] bg-white hover:border-gray-300'
+                        }`}
+                      >
+                        <div className={`mt-0.5 shrink-0 ${deliveryMethod === 'delivery' ? 'text-[#EF5A33]' : 'text-[#737373]'}`}>
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${deliveryMethod === 'delivery' ? 'border-[#EF5A33]' : 'border-gray-300'}`}>
+                            {deliveryMethod === 'delivery' && <div className="w-2 h-2 rounded-full bg-[#EF5A33]" />}
+                          </div>
+                        </div>
+                        <div>
+                          <p className={`text-sm font-bold ${deliveryMethod === 'delivery' ? 'text-[#EF5A33]' : 'text-[#171717]'}`}>Livraison à domicile</p>
+                          <p className="text-[11px] text-[#737373] mt-0.5">Expédition à l'adresse indiquée ci-dessus.</p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMethod('pickup')}
+                        className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                          deliveryMethod === 'pickup' 
+                            ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' 
+                            : 'border-[#E8E6E2] bg-white hover:border-gray-300'
+                        }`}
+                      >
+                        <div className={`mt-0.5 shrink-0 ${deliveryMethod === 'pickup' ? 'text-emerald-600' : 'text-[#737373]'}`}>
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${deliveryMethod === 'pickup' ? 'border-emerald-600' : 'border-gray-300'}`}>
+                            {deliveryMethod === 'pickup' && <div className="w-2 h-2 rounded-full bg-emerald-600" />}
+                          </div>
+                        </div>
+                        <div>
+                          <p className={`text-sm font-bold ${deliveryMethod === 'pickup' ? 'text-emerald-700' : 'text-[#171717]'}`}>Retrait en personne</p>
+                          <p className="text-[11px] text-[#737373] mt-0.5">Récupérez l'œuvre directement (Gratuit).</p>
+                        </div>
+                      </button>
+                    </div>
+
+                    {deliveryMethod === 'delivery' ? (
+                      <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200 flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                        <p className="text-xs text-amber-900">
+                          <strong>Note :</strong> Des frais de livraison supplémentaires peuvent s'appliquer selon votre région. Nous vous contacterons après la commande.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mt-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200 flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <p className="text-xs text-emerald-900">
+                          <strong>Point de retrait :</strong> {settings.pickup_address || "L'adresse exacte vous sera communiquée après confirmation du paiement."}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 

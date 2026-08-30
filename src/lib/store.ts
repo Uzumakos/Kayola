@@ -1,5 +1,6 @@
 import { Artwork, Category, Order, PaymentMethod, PaymentProof, OrderEvent, ArtworkStatus, GallerySettings } from '../types';
 import { generateAccessCredentials, syncOrderToSupabase, isSupabaseConfigured, GeneratedCredentials, syncArtworkToSupabase, deleteArtworkFromSupabase, syncPaymentMethodToSupabase, deletePaymentMethodFromSupabase, syncCategoryToSupabase, deleteCategoryFromSupabase, syncSettingsToSupabase } from './supabase';
+import { hashPassword } from './hash';
 
 const STORAGE_KEYS = {
   ARTWORKS: 'kayola_artworks_v1',
@@ -19,6 +20,7 @@ const INITIAL_SETTINGS: GallerySettings = {
   contact_email: 'contact@kayola-art.com',
   contact_phone: '+509 3800-0000',
   address: 'KAYOLA Space, Port-au-Prince & Global Concierge',
+  about_images: [],
   updated_at: '1970-01-01T00:00:00.000Z',
 };
 
@@ -349,8 +351,16 @@ class KayolaStore {
 
   public mergeSettings(remoteSettings: GallerySettings) {
     if (new Date(remoteSettings.updated_at || 0) > new Date(this.settings.updated_at || 0)) {
-      this.settings = remoteSettings;
-      this.saveSettings(remoteSettings, true);
+      // Merge defensively to preserve local fields (like about_images or admin_email) 
+      // if they haven't been added to the remote Supabase schema yet.
+      const merged = { ...this.settings };
+      for (const key in remoteSettings) {
+        if ((remoteSettings as any)[key] !== undefined && (remoteSettings as any)[key] !== null) {
+          (merged as any)[key] = (remoteSettings as any)[key];
+        }
+      }
+      this.settings = merged;
+      this.saveSettings(this.settings, true);
     }
   }
   // --- ARTWORKS ---
@@ -530,6 +540,7 @@ class KayolaStore {
     orderNumber?: string;
     accessCode?: string;
     orderId?: string;
+    deliveryMethod?: 'delivery' | 'pickup';
   }): { order: Order; success: boolean; error?: string } {
     const artwork = this.getArtworkById(params.artworkId);
     if (!artwork) {
@@ -598,6 +609,7 @@ class KayolaStore {
       customer_notes: params.notes,
       payment_method_id: params.paymentMethodId,
       payment_method: this.getPaymentMethodById(params.paymentMethodId),
+      delivery_method: params.deliveryMethod,
       amount: artwork.price,
       currency: artwork.currency,
       status: params.proofFile ? 'PAYMENT_REVIEW' : 'PENDING',
@@ -708,6 +720,30 @@ class KayolaStore {
     return true;
   }
 
+  public cancelOrder(orderId: string, reason: string): boolean {
+    const order = this.orders.find((o) => o.id === orderId);
+    if (!order) return false;
+
+    const now = new Date().toISOString();
+    order.status = 'CANCELLED';
+    order.updated_at = now;
+
+    if (!order.events) order.events = [];
+    order.events.push({
+      id: `evt-${Date.now()}`,
+      order_id: orderId,
+      event_type: 'ORDER_CANCELLED',
+      description_fr: `Commande annulée : ${reason}`,
+      description_en: `Order cancelled: ${reason}`,
+      created_at: now,
+      created_by: 'Administrateur KAYOLA',
+    });
+
+    this.saveOrders();
+    syncOrderToSupabase(order).catch(e => console.warn(e));
+    return true;
+  }
+
   public rejectPayment(orderId: string, reason: string): boolean {
     const order = this.orders.find((o) => o.id === orderId);
     if (!order) return false;
@@ -781,14 +817,50 @@ class KayolaStore {
     return this.isAdminLoggedIn;
   }
 
-  public adminLogin(password: string): boolean {
-    if (password === 'admin123' || password === 'kayola2026' || password === 'admin') {
+  public async adminLogin(email: string, password: string): Promise<boolean> {
+    const isFirstTime = !this.settings.admin_email;
+
+    // Fallback for demo or if not setup
+    if (isFirstTime) {
+      if ((password === 'admin123' || password === 'kayola2026' || password === 'admin') && email === 'admin@kayola-art.com') {
+        this.isAdminLoggedIn = true;
+        localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
+        this.notify();
+        return true;
+      }
+      return false;
+    }
+
+    const hashed = await hashPassword(password);
+    if (this.settings.admin_email === email && this.settings.admin_password_hash === hashed) {
       this.isAdminLoggedIn = true;
       localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
       this.notify();
       return true;
     }
+
     return false;
+  }
+
+  public async setupAdminCredentials(email: string, password: string): Promise<boolean> {
+    if (this.settings.admin_email) return false; // Already setup
+
+    const hashed = await hashPassword(password);
+    this.settings.admin_email = email;
+    this.settings.admin_password_hash = hashed;
+    
+    // Save to localStorage
+    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(this.settings));
+    
+    // Sync to Supabase
+    syncSettingsToSupabase(this.settings).catch(e => console.warn(e));
+
+    // Auto-login
+    this.isAdminLoggedIn = true;
+    localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
+    this.notify();
+    
+    return true;
   }
 
   public adminLogout() {

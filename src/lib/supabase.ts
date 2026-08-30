@@ -369,6 +369,9 @@ export async function syncSettingsToSupabase(settings: GallerySettings): Promise
       contact_email: settings.contact_email,
       contact_phone: settings.contact_phone,
       address: settings.address,
+      about_images: settings.about_images,
+      admin_email: settings.admin_email,
+      admin_password_hash: settings.admin_password_hash,
       updated_at: new Date().toISOString(),
     });
     if (error) return { success: false, error: error.message };

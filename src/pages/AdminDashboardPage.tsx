@@ -23,6 +23,7 @@ import {
   Clock,
   ShieldCheck,
   CheckCircle2,
+  RotateCcw,
   FileText,
   DollarSign,
   Search,
@@ -37,7 +38,6 @@ import {
   Barcode,
   Hash,
   QrCode,
-  RotateCcw,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -81,6 +81,7 @@ export const AdminDashboardPage: React.FC = () => {
 
   // Auth State
   const [isLoggedIn, setIsLoggedIn] = useState(store.isAdmin());
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState(false);
 
@@ -102,6 +103,8 @@ export const AdminDashboardPage: React.FC = () => {
   const [contactEmailInput, setContactEmailInput] = useState(() => store.getSettings().contact_email || '');
   const [contactPhoneInput, setContactPhoneInput] = useState(() => store.getSettings().contact_phone || '');
   const [addressInput, setAddressInput] = useState(() => store.getSettings().address || '');
+  const [aboutImagesInput, setAboutImagesInput] = useState<string[]>(() => store.getSettings().about_images || []);
+  const [pickupAddressInput, setPickupAddressInput] = useState(() => store.getSettings().pickup_address || '');
   const [logoImageLoadError, setLogoImageLoadError] = useState(false);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
 
@@ -150,15 +153,25 @@ export const AdminDashboardPage: React.FC = () => {
     return unsubscribe;
   }, [selectedOrder?.id]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = store.adminLogin(loginPassword);
+    const isSetup = !store.getSettings().admin_email;
+    
+    let ok = false;
+    if (isSetup) {
+      ok = await store.setupAdminCredentials(loginEmail, loginPassword);
+      if (ok) toast('Identifiants administrateur configurés avec succès !', 'success');
+    } else {
+      ok = await store.adminLogin(loginEmail, loginPassword);
+      if (ok) toast('Connexion administrateur réussie', 'success');
+    }
+
     if (ok) {
       setIsLoggedIn(true);
       setLoginError(false);
-      toast('Connexion administrateur réussie', 'success');
     } else {
       setLoginError(true);
+      if (!isSetup) toast('Identifiants incorrects', 'error');
     }
   };
 
@@ -417,6 +430,7 @@ export const AdminDashboardPage: React.FC = () => {
       contact_email: contactEmailInput.trim(),
       contact_phone: contactPhoneInput.trim(),
       address: addressInput.trim(),
+      about_images: aboutImagesInput.map(url => url.trim()).filter(Boolean),
     });
     setSettings(updated);
     toast('Identité et logo de la galerie mis à jour avec succès.', 'success');
@@ -464,42 +478,47 @@ export const AdminDashboardPage: React.FC = () => {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <h2 className="font-serif text-2xl font-bold text-[#171717]">
-              {t.admin.loginTitle}
+              {!store.getSettings().admin_email ? 'Configuration Administrateur' : t.admin.loginTitle}
             </h2>
             <p className="text-xs text-[#737373]">
-              {t.admin.loginSubtitle}
+              {!store.getSettings().admin_email 
+                ? 'Configurez votre email et mot de passe pour sécuriser l\'accès.'
+                : t.admin.loginSubtitle}
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-[#171717] block">
-                {t.admin.emailLabel}
+                {t.admin.emailLabel || 'Email Administrateur'}
               </label>
               <input
-                type="text"
-                defaultValue="admin@kayola-art.com"
-                className="w-full px-4 py-3 bg-[#FAF9F6] border border-[#E8E6E2] rounded-xl text-sm"
+                type="email"
+                required
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="admin@kayola-art.com"
+                className="w-full px-4 py-3 bg-[#FAF9F6] border border-[#E8E6E2] rounded-xl text-sm focus:outline-hidden focus:border-[#EF5A33]"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-[#171717] block">
-                {t.admin.passwordLabel}
+                {t.admin.passwordLabel || 'Mot de passe'}
               </label>
               <input
                 type="password"
                 required
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="Entrez votre mot de passe (ex: admin123)"
+                placeholder="Entrez votre mot de passe"
                 className="w-full px-4 py-3 bg-[#FAF9F6] border border-[#E8E6E2] rounded-xl text-sm font-mono focus:outline-hidden focus:border-[#EF5A33]"
               />
             </div>
 
-            {loginError && (
+            {loginError && store.getSettings().admin_email && (
               <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
-                Mot de passe incorrect. Mot de passe de démonstration : <code>admin123</code>
+                Identifiants incorrects. Veuillez réessayer.
               </div>
             )}
 
@@ -507,13 +526,13 @@ export const AdminDashboardPage: React.FC = () => {
               type="submit"
               className="w-full py-4 rounded-full bg-[#EF5A33] text-white font-semibold text-xs uppercase tracking-wider hover:bg-[#D94725] transition-all shadow-md"
             >
-              {t.admin.loginBtn}
+              {!store.getSettings().admin_email ? 'Configurer l\'accès' : t.admin.loginBtn}
             </button>
           </form>
 
-          <div className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E2] text-center text-xs text-[#737373]">
+          {/* <div className="p-3.5 bg-[#FAF9F6] rounded-xl border border-[#E8E6E2] text-center text-xs text-[#737373]">
             <p>Accès Démo : Mot de passe <strong>admin123</strong></p>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     );
@@ -975,18 +994,39 @@ export const AdminDashboardPage: React.FC = () => {
                     <span>Modifier</span>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      if (window.confirm(t.admin.artworkModal.deleteConfirm)) {
-                        store.deleteArtwork(art.id);
-                        toast('Œuvre supprimée', 'info');
-                      }
-                    }}
-                    className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs"
-                    title="Supprimer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {art.status !== 'AVAILABLE' && (
+                      <button
+                        onClick={() => {
+                          if (window.confirm("Êtes-vous sûr de vouloir restaurer cette œuvre et annuler la commande associée ?")) {
+                            store.updateArtworkStatus(art.id, 'AVAILABLE');
+                            const relatedOrder = store.getOrders().find(o => o.artwork_id === art.id && o.status !== 'CANCELLED');
+                            if (relatedOrder) {
+                              store.cancelOrder(relatedOrder.id, "Annulée suite à la restauration de l'œuvre (Admin).");
+                            }
+                            toast('Œuvre restaurée et commande annulée', 'success');
+                          }
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-[11px] font-bold transition-colors"
+                        title="Restaurer l'œuvre (Annule la commande)"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Restaurer</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        if (window.confirm(t.admin.artworkModal.deleteConfirm)) {
+                          store.deleteArtwork(art.id);
+                          toast('Œuvre supprimée', 'info');
+                        }
+                      }}
+                      className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs"
+                      title="Supprimer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1114,6 +1154,34 @@ export const AdminDashboardPage: React.FC = () => {
               <Plus className="w-4 h-4" />
               <span>{t.admin.paymentModal?.createTitle || 'Ajouter un moyen de paiement'}</span>
             </button>
+          </div>
+
+          <div className="bg-[#FAF9F6] p-5 sm:p-6 rounded-2xl border border-[#E8E6E2] space-y-4">
+            <div className="flex items-start gap-3">
+              <Building2 className="w-5 h-5 text-[#EF5A33] shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="font-serif font-bold text-[#171717] text-base">Point de Retrait (Pickup)</h4>
+                <p className="text-xs text-[#737373] mt-1">Adresse à laquelle les clients viendront récupérer leurs œuvres d'art.</p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                value={pickupAddressInput}
+                onChange={(e) => setPickupAddressInput(e.target.value)}
+                placeholder="Ex: Galerie KAYOLA, 12 Rue des Arts..."
+                className="flex-1 px-4 py-2.5 rounded-xl border border-[#E8E6E2] focus:outline-hidden focus:border-[#EF5A33] text-sm bg-white"
+              />
+              <button
+                onClick={() => {
+                  setSettings(store.saveSettings({ pickup_address: pickupAddressInput.trim() }));
+                  toast('Adresse de retrait mise à jour.', 'success');
+                }}
+                className="px-5 py-2.5 bg-white border border-[#E8E6E2] hover:bg-[#FAF9F6] rounded-xl text-xs font-semibold text-[#171717] transition-colors shrink-0"
+              >
+                Enregistrer l'adresse
+              </button>
+            </div>
           </div>
 
           {paymentMethods.length === 0 ? (
@@ -1437,6 +1505,54 @@ export const AdminDashboardPage: React.FC = () => {
                       className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
                     />
                   </div>
+                </div>
+
+                {/* Images de la page À Propos */}
+                <div className="space-y-4 pt-4 border-t border-[#E8E6E2]">
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-serif font-bold text-sm text-[#171717]">
+                      Images du slider "À Propos"
+                    </h5>
+                    <button
+                      type="button"
+                      onClick={() => setAboutImagesInput([...aboutImagesInput, ''])}
+                      className="text-xs text-[#EF5A33] font-bold uppercase tracking-wider hover:underline"
+                    >
+                      + Ajouter une image
+                    </button>
+                  </div>
+                  
+                  {aboutImagesInput.length === 0 ? (
+                    <p className="text-xs text-[#737373]">Aucune image. Une image par défaut sera utilisée.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {aboutImagesInput.map((url, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={url}
+                            onChange={(e) => {
+                              const newArr = [...aboutImagesInput];
+                              newArr[index] = e.target.value;
+                              setAboutImagesInput(newArr);
+                            }}
+                            placeholder="https://..."
+                            className="w-full px-4 py-2.5 rounded-2xl bg-[#FAF9F6] border border-[#E8E6E2] text-sm text-[#171717] focus:outline-hidden focus:border-[#171717]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newArr = aboutImagesInput.filter((_, i) => i !== index);
+                              setAboutImagesInput(newArr);
+                            }}
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Coordonnées de Contact */}

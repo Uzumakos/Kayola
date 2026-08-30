@@ -149,6 +149,7 @@ export interface Order {
   customer_notes?: string;
   payment_method_id: string;
   payment_method?: PaymentMethod;
+  delivery_method?: 'delivery' | 'pickup';
   amount: number;
   currency: string;
   status: OrderStatus;
@@ -182,6 +183,11 @@ export interface GallerySettings {
   contact_email?: string;
   contact_phone?: string;
   address?: string;
+  pickup_address?: string;
+  about_images?: string[];
+
+  admin_email?: string;
+  admin_password_hash?: string;
 
   updated_at?: string;
 }
