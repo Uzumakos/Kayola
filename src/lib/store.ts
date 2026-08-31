@@ -297,6 +297,8 @@ class KayolaStore {
 
   public mergeOrders(remoteOrders: Order[]) {
     let changed = false;
+    let artworksChanged = false;
+
     for (const remote of remoteOrders) {
       const idx = this.orders.findIndex(o => o.id === remote.id);
       if (idx === -1) {
@@ -306,10 +308,29 @@ class KayolaStore {
         this.orders[idx] = remote;
         changed = true;
       }
+
+      // Reconcile artwork status based on order status to fix synchronization issues
+      const artwork = this.artworks.find(a => a.id === remote.artwork_id);
+      if (artwork) {
+        if (remote.status === 'SOLD' && artwork.status !== 'SOLD') {
+          artwork.status = 'SOLD';
+          artwork.sold_at = remote.sold_at || remote.updated_at;
+          artworksChanged = true;
+          syncArtworkToSupabase(artwork).catch(e => console.warn(e));
+        } else if (remote.status === 'PAYMENT_REVIEW' && artwork.status === 'AVAILABLE') {
+          artwork.status = 'PAYMENT_REVIEW';
+          artworksChanged = true;
+          syncArtworkToSupabase(artwork).catch(e => console.warn(e));
+        }
+      }
     }
+
     if (changed) {
       this.orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       this.saveOrders();
+    }
+    if (artworksChanged) {
+      this.saveArtworks();
     }
   }
 
